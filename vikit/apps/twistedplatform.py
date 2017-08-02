@@ -160,6 +160,8 @@ class TwistedPlatform(interfaces.AppInterfaces, singleton.Singleton):
     #----------------------------------------------------------------------
     def get_services(self):
         """"""
+        #print 'into twistedplatform get_services func'
+        #print self.platform_entity._dict_service_infos
         return self.platform_entity._dict_service_infos.keys()
     
     #----------------------------------------------------------------------
@@ -191,7 +193,9 @@ class TwistedPlatform(interfaces.AppInterfaces, singleton.Singleton):
     @_fsm.onstate(state_START, state_LISTENING)
     def add_default_service(self, module_name, port):
         """"""
+        #print 'into add'
         self._list_default_service.append((module_name, port))
+        #print self._list_default_service
         
     @_fsm.onstate(state_LISTENING)
     def start_service(self, service_node_id, module_name,

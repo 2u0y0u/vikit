@@ -221,7 +221,7 @@ class ClientTrigger(_base.Trigger):
             return client.get_state()
         elif func == action_shutdown:
             try:
-                return None #client.shutdown()
+                return client.shutdown()
             except:
                 return None
     

@@ -6,6 +6,9 @@
   Created: 07/02/17
 """
 
+from vikit.apps import twistedservicenode
+
+
 #----------------------------------------------------------------------
 def start_servicenode(id=None, platform_host='127.0.0.1', 
                       platform_port=7000, async=False,

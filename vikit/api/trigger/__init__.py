@@ -7,3 +7,4 @@
 """
 
 from ._client import get_client_proxy
+from ._platform import get_platform_proxy
