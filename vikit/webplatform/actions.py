@@ -49,6 +49,7 @@ def add_default_service():
     return 'add success'
 
 
+
 @client_app.route('/available-service-nodes')
 def get_available_service_nodes():
     """"""
@@ -91,5 +92,5 @@ def get_service_info(service_id):
 @client_app.route('/', methods=['GET'])
 def main():
     """"""
-    return "test"
+    return render_template('main.html')
     # return render_template('main.html')
