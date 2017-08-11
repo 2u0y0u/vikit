@@ -19,10 +19,29 @@
         if($.cookie('state')==null){
             $.cookie('state','offline');
         }
+
         //use to handle refresh
         if($.cookie('state')=='online'){
             $("#start").click();
         }
+     });
+     $(document).ready(function(){
+        if($.cookie('login_state')==null){
+            $.cookie('login_state','off');
+        }
+        if($.cookie('username')==null){
+            $.cookie('username','username');
+        }
+        if($.cookie('login_state')=='off'){
+            $(".user_login1").hide();
+            $(".user_login2").show();
+        }
+        else{
+            $(".user_login2").hide();
+            $(".user_login1").show();
+        }
+        $(".username_span").text($.cookie('username'));
+        
      });
     </script>
 </head>
@@ -90,7 +109,7 @@
  <div class="user_login">
         <a href="javascript:void(0)" onclick="user_alert()" class="user_login1" style="display: none"><div class="user_login_div">
             <img src="{{ url_for('static', filename='images/user_001.png') }}" class="user_img" />
-            <span href="javascript:void(0)" style="color:#fff">username</span>
+            <span href="javascript:void(0)" style="color:#fff" class="username_span">username</span>
             <img src="{{ url_for('static', filename='images/arrow.png') }}" class="user_point">
         </div></a>
         <a href="javascript:void(0)" class="user_login2" onclick="login()"><div class="user_tologin_div">
@@ -205,12 +224,12 @@
     </ul>
     <div class="Service search_in_div">
         <p><span style="margin-left: 40px;margin-right:20px;">service_id:</span><input type="text" name="service_id" class="input" placeholder="service_id" spellcheck="false"/><input type="button" value="Search" class="button button-primary button-rounded" style="margin-left: 20px" onclick="search_service()"/>
-        <div class="service_seacher search_result" style="margin-left: 10px;margin-right:10px;margin-top: 20px"><span>&nbsp</span></div>
+        <div class="service_seacher search_result" style="margin-left: 10px;margin-right:10px;margin-top: 20px"><span>&nbsp;</span></div>
     </div>
     <!-- <div class="test set_in_div" style="display:none">test</div> -->
     <div class="ServiceNode search_in_div" style="display:none">
          <p><span style="margin-left: 40px;margin-right:20px;">service_node_name:</span><input type="text" name="service_node_name" class="input" placeholder="service_node_name" spellcheck="false"/><input type="button" value="Search" class="button button-primary button-rounded" style="margin-left: 20px" onclick="search_service_node()"/>
-         <div class="service_node_seacher search_result" style="margin-left: 10px;margin-right:10px;margin-top: 20px"><span>&nbsp</span></div>
+         <div class="service_node_seacher search_result" style="margin-left: 10px;margin-right:10px;margin-top: 20px"><span>&nbsp;</span></div>
     </div>
 </div>
 <div id="user_information_div" class="contain" style="display: none; padding: 0;"><span>User information</span>
@@ -244,19 +263,7 @@
 </div>
 </body>
 <script type="text/javascript">
-$(document).ready(function(){
-        if($.cookie('login_state')==null){
-            $.cookie('login_state','off');
-        }
-        if($.cookie('login_state')=='off'){
-            $(".user_login1").hide();
-            $(".user_login2").show();
-        }
-        else{
-            $(".user_login2").hide();
-            $(".user_login1").show();
-        }
-     });
+
 function servicenode(){
     $(".contain").hide();
     $("#servicenode_div").show();
@@ -302,9 +309,10 @@ function loginout(){
 }
 
 function login(){
-    $.cookie('login_state','on');
+    /*$.cookie('login_state','on');
     $(".user_login2").hide();
-    $(".user_login1").show();
+    $(".user_login1").show();*/
+    window.location.href="/login";
 }
 function user_alert(){
     //$(".user_alert").show();
