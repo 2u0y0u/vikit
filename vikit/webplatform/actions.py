@@ -73,6 +73,7 @@ def add_default_service():
     return 'add success'
 
 
+
 @client_app.route('/available-service-nodes')
 def get_available_service_nodes():
     """"""
@@ -117,6 +118,7 @@ def get_service_info(service_id):
 @login_required
 def main():
     """"""
+<<<<<<< HEAD
     return "platform admin"
     # return render_template('main.html')
 
@@ -148,3 +150,21 @@ def logout():
     return redirect(url_for('login'))
 
 
+=======
+    return render_template('main.html')
+    # return render_template('main.html')
+
+@client_app.route('/login', methods=['POST','GET'])
+def login():
+    """"""
+    error=None
+    if request.method=='POST':
+        if request.form['username']=='admin':
+            if request.form['password']=='admin':
+                return render_template('main.html',username=request.form['username'])
+            else:
+                error = 'username or password error'
+        else:
+            error = 'username or password error'
+    return render_template('login.html',error=error)
+>>>>>>> c6248a91e9b9b0c2b18e14872e68dddf85165918
