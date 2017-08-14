@@ -95,7 +95,16 @@ def main():
     return render_template('main.html')
     # return render_template('main.html')
 
-@client_app.route('/login', methods=['GET'])
+@client_app.route('/login', methods=['POST','GET'])
 def login():
     """"""
-    return render_template('login.html')
+    error=None
+    if request.method=='POST':
+        if request.form['username']=='admin':
+            if request.form['password']=='admin':
+                return render_template('main.html',username=request.form['username'])
+            else:
+                error = 'username or password error'
+        else:
+            error = 'username or password error'
+    return render_template('login.html',error=error)
