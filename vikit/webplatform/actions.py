@@ -16,6 +16,30 @@ from flask import render_template, request, jsonify
 from flask import session, redirect, url_for, make_response
 from flask import g
 
+from form import LoginForm
+from flask_wtf.csrf import CsrfProtect
+from model import User
+from flask_login import login_user, login_required
+from flask_login import LoginManager, current_user
+from flask_login import logout_user
+
+# use login manager to manage session
+login_manager = LoginManager()
+login_manager.session_protection = 'strong'
+login_manager.login_view = 'login'
+login_manager.init_app(app=client_app)
+
+# reload User object，根据session中存储的user id
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
+
+# csrf protextion
+csrf = CsrfProtect()
+csrf.init_app(app=client_app)
+
+import flask
+
 proxy = None
 
 
@@ -89,7 +113,38 @@ def get_service_info(service_id):
 
 # common route
 @client_app.route('/', methods=['GET'])
+@client_app.route('/index',methods=['GET'])
+@login_required
 def main():
     """"""
-    return "test"
+    return "platform admin"
     # return render_template('main.html')
+
+
+#==============================================
+
+
+# user route
+@client_app.route('/login',methods=['GET','POST'])
+def login():
+    form = LoginForm()
+    if flask.request.method=='GET':
+        return render_template('login.html', form=form)
+
+    if form.validate_on_submit():
+        user_name = request.form.get('username', None)
+        password = request.form.get('password', None)
+        user = User(user_name)
+        if user.verify_password(password):
+            login_user(user)
+            return redirect(url_for('main'))
+        else:
+            return 'login failed'
+
+@client_app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+

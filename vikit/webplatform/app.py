@@ -9,7 +9,7 @@
 from flask import Flask
 
 client_app = Flask(__name__)
-
+client_app.config['SECRET_KEY'] = 'conan2151234512'
 from . import actions
 
 
