@@ -88,7 +88,11 @@ html,body{
 </div>
 <div class="login">
 	<div class="wel">user login</div>
-	<form class="form" action="/" name="login" method="get" onsubmit="return state()">
+	
+	<form class="form" action="/login" name="login" method="post" onsubmit="return state()">
+		{% if error %}
+		<p style="color: red; margin-bottom: 0">error:{{error}}</p>
+		{% endif %}
 		<p><span>username:</span><input type="text" name="username"  class="input" placeholder="username" spellcheck="false"/></p>
 		<p><span>password:</span><input type="password" name="password" class="input" placeholder="password" spellcheck="false"/></p>
 		<input type="submit" name="submit" value="Login" class="submit button button-raised button-primary button-pill"/>

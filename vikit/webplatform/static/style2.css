@@ -1014,7 +1014,7 @@ i.fa.fa-angle-down {
 .user_alert a:hover{
     background-color: #eee;
 }
-#user_information_div span{
+.user_information_span{
     font-size: 20px;
     color: #333;
     display: block;
