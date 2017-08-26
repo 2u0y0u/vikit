@@ -140,6 +140,22 @@ class VikitService(vikitbase.VikitBase):
         #
         # load mod from module name
         #
+        # load mod plugins firstly
+        import sys
+        from vikit.mods.config import PLUGINS_DIR
+        sys.path.append(PLUGINS_DIR+'beebeeto')
+        sys.path.append(PLUGINS_DIR+'bugscan')
+        sys.path.append(PLUGINS_DIR+'pocsuite')
+        #sys.path.append(PLUGINS_DIR+'tangscan')
+        #sys.path.append(PLUGINS_DIR+'kspoc')
+        #sys.path.append(PLUGINS_DIR+'tangscan/tangscan')
+        # load poc dir
+        from vikit.mods.config import POCS_DIR
+        sys.path.append(POCS_DIR+'beebeeto')
+        sys.path.append(POCS_DIR+'bugscan')
+        sys.path.append(POCS_DIR+'pocsuite')
+        #sys.path.append(POCS_DIR+'tangscan')
+        #sys.path.append(POCS_DIR+'kspoc')
         obj = __import__(module_name)
         
         assert isinstance(obj, types.ModuleType)

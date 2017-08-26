@@ -17,16 +17,20 @@ p = twistedplatform.TwistedPlatform('thisisaplatform_id', config=config)
 
 p.start()
 p.add_default_service('demo', 7034)
-p.add_default_service('demo', 7035)
-p.add_default_service('demo', 7036)
-p.add_default_service('demo', 7037)
+p.add_default_service('SVN_information_disclosure_', 7035)
+p.add_default_service('bugscan-1', 7036)
+# kspoc is not useable
+#p.add_default_service('discuz3', 7037)
+# tangscan is not useable
+#p.add_default_service('flash_crossdomain_xml_csrf',7078)
+p.add_default_service('git_config_info_disclosure',7079)
 
 #p.mainloop_start()
 #pr = Thread(target=p.mainloop_start)
 #pr.start()
 
 
-print('tset')
+print('test')
 
 #----------------------------------------------------------------------
 def test_print_info():

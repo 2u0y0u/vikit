@@ -24,6 +24,10 @@ from . import result as vikitresult
 from . import modinput
 from . import utils
 
+import sys
+from vikit.mods.config import PLUGINS_DIR
+sys.path.append(PLUGINS_DIR)
+
 #
 # DEFINE PRIVATE VAR
 #
@@ -282,102 +286,211 @@ class ModStandard(ModBase):
     def from_module(self, module_obj):
         """"""
         assert isinstance(module_obj, types.ModuleType)
-        
-        #
-        # process name/author/description/data_dir
-        #
-        if hasattr(module_obj, NAME):
-            self.NAME = getattr(module_obj, NAME)
+        from vikit.mods.poc_adaptor import Poc_Adaptor
+        module_type='vikit'
+        #detect the module_obj's type,check if it is a poc
+        if hasattr(module_obj,'MyPoc'):
+            module_type='beebeeto'
+        elif hasattr(module_obj,'TestPOC'):
+            module_type='pocsuite'
+        elif hasattr(module_obj,'TangScan'):
+            module_type='tangscan'
+        elif hasattr(module_obj,'main'):
+            module_type='kspoc'
+        elif hasattr(module_obj,'audit'):
+            module_type='bugscan'
         else:
-            self.NAME = self._name
-            
-        if hasattr(module_obj, AUTHOR):
-            self.AUTHOR = getattr(module_obj, AUTHOR)
+            pass
+
+        if module_type=='vikit':
+            #
+            # process name/author/description/data_dir
+            #
+            if hasattr(module_obj, NAME):
+                self.NAME = getattr(module_obj, NAME)
+            else:
+                self.NAME = self._name
+
+            if hasattr(module_obj, AUTHOR):
+                self.AUTHOR = getattr(module_obj, AUTHOR)
+            else:
+                self.AUTHOR = 'vikit'
+
+            if hasattr(module_obj, DESCRIPTION):
+                self.DESCRIPTION = getattr(module_obj, DESCRIPTION)
+            else:
+                self.DESCRIPTION = 'No Description For module'
+
+            if hasattr(module_obj, DATA_DIR):
+                self.DATA_DIR = getattr(module_obj, DATA_DIR)
+            else:
+                self.DATA_DIR = _DEFAULT_DATAS_PATH
+
+
+            #
+            # process result_desc/export_func/
+            #
+            RESULT_DESC='RESULT_DESC'
+            assert hasattr(module_obj, RESULT_DESC)
+            self.RESULT_DESC = getattr(module_obj, RESULT_DESC)
+
+            assert hasattr(module_obj, EXPORT_FUNC)
+            assert callable(getattr(module_obj, EXPORT_FUNC))
+            self._core_func = getattr(module_obj, EXPORT_FUNC)
+            self.EXPORT_FUNC = getattr(module_obj, EXPORT_FUNC)
+
+            assert hasattr(module_obj, INPUT)
+            self.DEMANDS = tuple(getattr(module_obj, INPUT))
+
+
+            #
+            # default callable functions: INPUT_CHECK_FUNC/SEARCH_FUNC
+            #                             /PERSISTENCE_FUNC/QUERY_FUNC
+            if hasattr(module_obj, INPUT_CHECK_FUNC):
+                _ = getattr(module_obj, INPUT_CHECK_FUNC)
+                assert callable(_)
+                self.INPUT_CHECK_FUNC = _
+            else:
+                self.INPUT_CHECK_FUNC = self._check_input
+
+            if hasattr(module_obj, SEARCH_FUNC):
+                _ = getattr(module_obj, SEARCH_FUNC)
+                assert callable(_)
+                self.SEARCH_FUNC = _
+            else:
+                self.SEARCH_FUNC = self._search_func
+
+            if hasattr(module_obj, PERSISTENCE_FUNC):
+                _ = getattr(module_obj, PERSISTENCE_FUNC)
+                assert callable(_)
+                self.PERSISTENCE_FUNC = _
+            else:
+                self.PERSISTENCE_FUNC = self._persistence_func
+
+            if hasattr(module_obj, DELETE_FROM_DB_FUNC):
+                _ = getattr(module_obj, DELETE_FROM_DB_FUNC)
+                assert callable(_)
+                self.DELETE_FROM_DB_FUNC = _
+            else:
+                self.DELETE_FROM_DB_FUNC = self._delete_func
+
+            _cdb = True
+            if self.PERSISTENCE_FUNC == self._persistence_func and \
+               self.SEARCH_FUNC == self._search_func and \
+               self.DELETE_FROM_DB_FUNC == self._delete_func:
+                pass
+            elif self.PERSISTENCE_FUNC != self._persistence_func and \
+                 self.SEARCH_FUNC != self._search_func and \
+                 self.DELETE_FROM_DB_FUNC != self._delete_func:
+                _cdb = False
+            else:
+                warnings.warn('db define should set ' + \
+                   'PERSISTENCE_FUNC, SEARCH_FUNC and DELETE_FROM_DB_FUNC at the same time')
+                pass
+
+            #
+            # initial db
+            #
+            if _cdb:
+                self.init_db()
+            else:
+                pass
+
+            modenv = vars(module_obj)
+            for i in BUILD_IN_VAR:
+                modenv[i] = getattr(self, i)
         else:
-            self.AUTHOR = 'vikit'
-        
-        if hasattr(module_obj, DESCRIPTION):
-            self.DESCRIPTION = getattr(module_obj, DESCRIPTION)
-        else:
-            self.DESCRIPTION = 'No Description For module'
-            
-        if hasattr(module_obj, DATA_DIR):
-            self.DATA_DIR = getattr(module_obj, DATA_DIR)
-        else:
+            #
+            # process name/author/description/data_dir
+            #
+            poc_adaptor=Poc_Adaptor(module_type,module_obj)
+
+            self.NAME=Poc_Adaptor.operator.get(module_type)().get_vul_info(module_obj)['name']
+            if Poc_Adaptor.operator.get(module_type)().get_vul_info(module_obj).has_key('author'):
+                self.AUTHOR =Poc_Adaptor.operator.get(module_type)().get_vul_info(module_obj)['author']
+            else:
+                self.AUTHOR='vikit'
+
+            if Poc_Adaptor.operator.get(module_type)().get_vul_info(module_obj).has_key('desc'):
+                self.DESCRIPTION = Poc_Adaptor.operator.get(module_type)().get_vul_info(module_obj)['desc']
+            else:
+                self.DESCRIPTION='no description'
+
             self.DATA_DIR = _DEFAULT_DATAS_PATH
-        
-        
-        #
-        # process result_desc/export_func/
-        #
-        assert hasattr(module_obj, RESULT_DESC)
-        self.RESULT_DESC = getattr(module_obj, RESULT_DESC)
-        
-        assert hasattr(module_obj, EXPORT_FUNC)
-        assert callable(getattr(module_obj, EXPORT_FUNC))
-        self._core_func = getattr(module_obj, EXPORT_FUNC)
-        self.EXPORT_FUNC = getattr(module_obj, EXPORT_FUNC)
-        
-        assert hasattr(module_obj, INPUT)
-        self.DEMANDS = tuple(getattr(module_obj, INPUT))
-        
-        
-        #
-        # default callable functions: INPUT_CHECK_FUNC/SEARCH_FUNC
-        #                             /PERSISTENCE_FUNC/QUERY_FUNC
-        if hasattr(module_obj, INPUT_CHECK_FUNC):
-            _ = getattr(module_obj, INPUT_CHECK_FUNC)
-            assert callable(_)
-            self.INPUT_CHECK_FUNC = _
-        else:
-            self.INPUT_CHECK_FUNC = self._check_input
-            
-        if hasattr(module_obj, SEARCH_FUNC):
-            _ = getattr(module_obj, SEARCH_FUNC)
-            assert callable(_)
-            self.SEARCH_FUNC = _  
-        else:
-            self.SEARCH_FUNC = self._search_func
-        
-        if hasattr(module_obj, PERSISTENCE_FUNC):
-            _ = getattr(module_obj, PERSISTENCE_FUNC)
-            assert callable(_)
-            self.PERSISTENCE_FUNC = _
-        else:
-            self.PERSISTENCE_FUNC = self._persistence_func
-        
-        if hasattr(module_obj, DELETE_FROM_DB_FUNC):
-            _ = getattr(module_obj, DELETE_FROM_DB_FUNC)
-            assert callable(_)
-            self.DELETE_FROM_DB_FUNC = _
-        else:
-            self.DELETE_FROM_DB_FUNC = self._delete_func
-        
-        _cdb = True
-        if self.PERSISTENCE_FUNC == self._persistence_func and \
-           self.SEARCH_FUNC == self._search_func and \
-           self.DELETE_FROM_DB_FUNC == self._delete_func:
-            pass
-        elif self.PERSISTENCE_FUNC != self._persistence_func and \
-             self.SEARCH_FUNC != self._search_func and \
-             self.DELETE_FROM_DB_FUNC != self._delete_func:
-            _cdb = False
-        else:
-            warnings.warn('db define should set ' + \
-               'PERSISTENCE_FUNC, SEARCH_FUNC and DELETE_FROM_DB_FUNC at the same time')
-            pass
-            
-        #
-        # initial db
-        #
-        if _cdb:
-            self.init_db()
-        else:
-            pass
-        
-        modenv = vars(module_obj)
-        for i in BUILD_IN_VAR:
-            modenv[i] = getattr(self, i)
+
+            #
+            # process result_desc/export_func/
+            #
+            RESULT_DESC = 'this description is about result from '+module_type
+            self.RESULT_DESC = RESULT_DESC
+
+            self._core_func = poc_adaptor.poc_verify
+            self.EXPORT_FUNC = poc_adaptor.poc_verify
+
+            from vikit.core.basic.modinput import TargetDemand, PayloadDemand, ParamDemand
+            from vikit.core.basic import target, payload, param
+            self.DEMANDS = tuple([TargetDemand('target', target.TYPE_URL),
+                       PayloadDemand('payload', payload.TYPE_TEXT),
+                       ParamDemand('param1', param.TYPE_BOOL),
+                       ParamDemand('param2', param.TYPE_STR)])
+
+            #
+            # default callable functions: INPUT_CHECK_FUNC/SEARCH_FUNC
+            #                             /PERSISTENCE_FUNC/QUERY_FUNC
+            if hasattr(module_obj, INPUT_CHECK_FUNC):
+                _ = getattr(module_obj, INPUT_CHECK_FUNC)
+                assert callable(_)
+                self.INPUT_CHECK_FUNC = _
+            else:
+                self.INPUT_CHECK_FUNC = self._check_input
+
+            if hasattr(module_obj, SEARCH_FUNC):
+                _ = getattr(module_obj, SEARCH_FUNC)
+                assert callable(_)
+                self.SEARCH_FUNC = _
+            else:
+                self.SEARCH_FUNC = self._search_func
+
+            if hasattr(module_obj, PERSISTENCE_FUNC):
+                _ = getattr(module_obj, PERSISTENCE_FUNC)
+                assert callable(_)
+                self.PERSISTENCE_FUNC = _
+            else:
+                self.PERSISTENCE_FUNC = self._persistence_func
+
+            if hasattr(module_obj, DELETE_FROM_DB_FUNC):
+                _ = getattr(module_obj, DELETE_FROM_DB_FUNC)
+                assert callable(_)
+                self.DELETE_FROM_DB_FUNC = _
+            else:
+                self.DELETE_FROM_DB_FUNC = self._delete_func
+
+            _cdb = True
+            if self.PERSISTENCE_FUNC == self._persistence_func and \
+                            self.SEARCH_FUNC == self._search_func and \
+                            self.DELETE_FROM_DB_FUNC == self._delete_func:
+                pass
+            elif self.PERSISTENCE_FUNC != self._persistence_func and \
+                            self.SEARCH_FUNC != self._search_func and \
+                            self.DELETE_FROM_DB_FUNC != self._delete_func:
+                _cdb = False
+            else:
+                warnings.warn('db define should set ' + \
+                              'PERSISTENCE_FUNC, SEARCH_FUNC and DELETE_FROM_DB_FUNC at the same time')
+                pass
+
+            #
+            # initial db
+            #
+            if _cdb:
+                self.init_db()
+            else:
+                pass
+
+            modenv = vars(module_obj)
+            for i in BUILD_IN_VAR:
+                modenv[i] = getattr(self, i)
+
     
     #----------------------------------------------------------------------
     def _delete_func(self, key):
@@ -492,7 +605,7 @@ class ModFactory(object):
     def build_standard_mod_from_module(self, module_obj, **mod_args):
         """"""
         _ = self.get_standard_mod(**mod_args)
-        
+
         try:
             _.from_module(module_obj)
         except Exception as e:
