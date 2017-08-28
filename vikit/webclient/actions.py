@@ -11,13 +11,13 @@ import json
 from .app import client_app
 
 from ..api.trigger import get_client_proxy
-
+from ..api.trigger import get_platform_proxy
 from flask import render_template, request, jsonify
 from flask import session, redirect, url_for, make_response
 from flask import g
 
 proxy = None
-
+proxy2 = None
 
 @client_app.route('/start')
 def start():
@@ -28,8 +28,38 @@ def start():
         proxy = get_client_proxy('127.0.0.1', 7000)
         proxy.regist_result_callback(on_result_feedback)
     return 'success' if proxy != None else 'fail'
+#-----------------------------------------
+@client_app.route('/admin/start')
+def start2():
+    """"""
+    global proxy2
+
+    if proxy2 == None:
+        proxy2 = get_platform_proxy(7000)
+        # proxy.regist_result_callback(on_result_feedback)
+    return 'success' if proxy != None else 'fail'
+
+@client_app.route('/add-default-service')
+def add_default_service():
+    module_name = request.args.get('module_name')
+    port = int(request.args.get('port'))
+    global proxy2
+    proxy2.add_default_service(module_name, port)
+    return 'add success'
+@client_app.route('/available-service-nodes')
+def get_available_service_nodes():
+    """"""
+    global proxy2
+    return json.dumps(proxy2.get_available_service_nodes())
 
 
+@client_app.route('/available-service-nodes-info')
+def get_available_service_nodes_info():
+    global proxy2
+    return json.dumps(proxy2.get_service_nodes_info())
+
+
+#---------------------------------------------
 @client_app.route('/shutdown')
 def shutdown():
     """"""
@@ -115,4 +145,47 @@ def show_result(task_id):
         return render_template('result.html', result=result, task_id=task_id)
     else:
         return render_template('result.html')
+
+@client_app.route('/crawler', methods=['GET'])
+def crawler():
+    """"""
+    return render_template('crawler.html')
+
+
+@client_app.route('/results', methods=['GET'])
+def all_result():
+    """"""
+    result='this is result'
+    return render_template('results.html',result=result)
+
+@client_app.route('/reqlist', methods=['GET'])
+def reqlist():
+    """"""
+    return render_template('reqlist.html')
+
+@client_app.route('/monitor', methods=['GET'])
+def monitor():
+    """"""
+    result='this is result'
+    return render_template('result.html',result=result)
+
+
+@client_app.route('/poc_list', methods=['GET'])
+def poc_list():
+    """"""
+    return render_template('poc_list.html')
+
+@client_app.route('/login', methods=['POST','GET'])
+def login():
+    """"""
+    error=None
+    if request.method=='POST':
+        if request.form['username']=='admin':
+            if request.form['password']=='admin':
+                return render_template('main.html',username=request.form['username'])
+            else:
+                error = 'username or password error'
+        else:
+            error = 'username or password error'
+    return render_template('login.html',error=error)
 

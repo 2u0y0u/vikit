@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block meta %}<!-- Add block info here -->{% endblock %}
+    <title>Vikit penetration</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='button.css') }}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style2.css') }}" rel="stylesheet" type="text/css">
+    <script type=text/javascript src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='bootstrap.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='bootstrap-table.js') }}"></script>
+    
+    <script type=text/javascript src="{{ url_for('static', filename='jquery.cookie.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='fresh-bootstrap-table.css') }}" rel="stylesheet" type="text/css">
+    <script>
+     $(document).ready(function(){
+        if($.cookie('state')==null){
+            $.cookie('state','offline');
+        }
+
+        //use to handle refresh
+        if($.cookie('state')=='online'){
+            $("#start").click();
+        }
+     });
+     $(document).ready(function(){
+        if($.cookie('login_state')==null){
+            $.cookie('login_state','off');
+        }
+        if($.cookie('username')==null){
+            $.cookie('username','username');
+        }
+        if($.cookie('login_state')=='off'){
+            $(".user_login1").hide();
+            $(".user_login2").show();
+        }
+        else{
+            $(".user_login2").hide();
+            $(".user_login1").show();
+        }
+        var usr=$(".fre_log").text();
+        if(usr=='usernameusername'){
+            $(".fre_log").text($.cookie('username'));
+        }
+        
+        
+     });
+    </script>
+</head>
+<style type="text/css">
+#search_div{
+    font-size:20px;
+    display:block;
+    font-style:normal;
+    padding-bottom: 1%;
+}
+.search_choice{
+  list-style: none;
+  overflow: hidden;
+  padding-left: 0;
+  background:#F6F6F6;
+  border:1px solid #E5E5E5;
+  border-bottom: none;
+  width:100%;
+  margin:auto;
+}
+.search_turn{
+    display:block;
+    float:left;
+    background-color: #F6F6F6;
+    border:1px #E5E5E5 solid;
+    color: #3C3C3C;
+    height: 50px;
+    width:150px;
+    line-height:50px;
+    border-right:1px solid #E5E5E5;
+    text-align:center;
+    
+    cursor:pointer;
+
+}
+.search_turn a{
+    color:#3C3C3C;
+    font-weight:400;
+}
+.selected{
+    border-bottom:none;
+    border-top:3px #1b93e1 solid;
+    background-color: #fff;
+}
+.selected a{
+    color: #1b93e1;
+}
+.search_result{
+    color:;
+    font-size: 17px;
+}
+#user_setting_div form p span{
+    display: inline-block;
+    width: 90px;
+}
+.mod_pas{
+    margin-left: 70px;
+    font-size: 18px;
+}
+</style>
+<body>
+<p>base page</p>
+{% block login_form %}
+{% endblock %}
+<div class="sidebar-menu" style="min-width: 230px;">
+                    <header class="logo1">
+                         <p class="sidebar-icon" style="display:block;margin-top: 10px;margin-bottom:50px;text-align: center; ">Vikit Platform</p>
+                    </header>
+                        <div style="border-top:1px ridge rgba(255, 255, 255, 0.15)"></div>
+                           <div class="menu">
+                           {% block mods %}{% endblock %}
+                           </div>
+                           <div class="clearfix"></div>  
+</div>
+<div class="left" style="word-wrap:break-word;word-break:break-all;">
+ <div class="user_login">
+        <a href="javascript:void(0)" onclick="user_alert()" class="user_login1" style="display: none"><div class="user_login_div">
+            <img src="{{ url_for('static', filename='images/user_001.png') }}" class="user_img" />
+            <span href="javascript:void(0)" style="color:#fff" class="username_span">
+            {% if username %}
+            {{username}}
+            {% else %}
+            <span class="fre_log">username</span>
+            {% endif %}
+            </span>
+            <img src="{{ url_for('static', filename='images/arrow.png') }}" class="user_point">
+        </div></a>
+        <a href="javascript:void(0)" class="user_login2" onclick="login()"><div class="user_tologin_div">
+            <img src="{{ url_for('static', filename='images/user_001.png') }}" class="user_img" />
+            <span href="javascript:void(0)" style="color:#fff">login</span>
+            
+        </div></a>
+        <div class="user_login_div2" >Vikit Platform</div>
+        
+    </div>
+    <div class="user_alert" >
+        <a href="javascript:void(0)" class="user_cls" onclick="user()">information</a>
+        <a href="javascript:void(0)" class="user_cls" onclick="user_set()">setting</a>
+        <a href="javascript:void(0)" class="user_cls" onclick="loginout()">loginout</a>
+    </div>
+<ol class="breadcrumb">
+                <li class="breadcrumb-item">Press start
+                
+                
+                </li>
+</ol>
+
+<div id="index" class="contain">Press start to connected to the platform
+    
+</div>
+<div id="servicenode_div" class="contain" style="display: none; padding: 0;">
+    <div class="wrapper">
+        <div class="fresh-table full-color-azure full-screen-table">
+       
+            <div class="toolbar2" >
+                <!-- <button id="alertBtn" class="btn btn-default">Alert</button> --><span>ServiceNode</span>
+            </div>
+            
+            <table id="fresh-table" class="table">
+                <thead>
+                    <th data-field="id">Index</th>
+                    <th data-field="service_name" data-sortable="true">from_id</th>
+                    <th data-field="salary" data-sortable="true">Ip</th>
+                    <th data-field="country" data-sortable="true">ram_percent</th>
+                    <th data-field="param">cpu_percent</th>
+                    <!-- <th data-field="actions" data-formatter="operateFormatter" data-events="operateEvents">ServiceNode</th> -->
+                </thead>
+                <tbody class="table-computer">
+                   <!--   <tr>
+                     <td>1</td>
+                     <td>Dakota Rice</td>
+                     <td>172.168.1.1</td>
+                     
+                     <td>yes</td>
+                     <td></td>
+                                      </tr>
+                                      <tr>
+                                      <td>2</td>
+                                      <td>Minerva Hooper</td>
+                                      <td>123</td>
+                                    
+                                      <td>no</td>
+                                      <td></td> 
+                                 </tr>  -->
+
+                </tbody>
+            </table>
+        </div>
+    
+    </div>
+</div>
+<div id="service_div" class="contain" style="display: none; padding: 0;">
+    <div class="wrapper">
+        <div class="fresh-table full-color-azure full-screen-table">
+        
+            
+            <div class="toolbar2" >
+                <!-- <button id="alertBtn" class="btn btn-default">Alert</button> --><span>Service</span>
+            </div>
+            
+            <table id="fresh-table2" class="table">
+                <thead>
+                    <th data-field="id">Index</th>
+                    <th data-field="service_name" data-sortable="true">id</th>
+                    <th data-field="salary" data-sortable="true">Ip</th>
+                    <th data-field="country" data-sortable="true">name</th>
+                    <th data-field="param">service_node_id</th>
+                    <!-- <th data-field="actions" data-formatter="operateFormatter" data-events="operateEvents">Service</th> -->
+                </thead>
+                <tbody class="table-computer">
+                   <!--  <tr>
+                       <td>1</td>
+                       <td>Dakota Rice</td>
+                       <td>172.168.1.1</td>
+                       <td>Niger</td>
+                       <td>1</td>
+                       <td></td>
+                   </tr>
+                   <tr>
+                   <td>2</td>
+                   <td>Minerva Hooper</td>
+                   <td>123</td>
+                   <td>Curaçao</td>
+                   <td>2</td>
+                   <td></td>
+                                   </tr> -->
+                </tbody>
+            </table>
+        </div>
+    
+    </div>
+</div>
+<div id="search_div" class="contain" style="display: none; padding: 0;padding-top: 5px">
+    <ul class="search_choice" >
+        <li class="search_turn selected" ><a href="javascript:void(0)">Service</a></li>
+        <li class="search_turn" ><a href="javascript:void(0)">ServiceNode</a></li>
+    </ul>
+    <div class="Service search_in_div">
+        <p><span style="margin-left: 40px;margin-right:20px;">service_id:</span><input type="text" name="service_id" class="input" placeholder="service_id" spellcheck="false"/><input type="button" value="Search" class="button button-primary button-rounded" style="margin-left: 20px" onclick="search_service()"/>
+        <div class="service_seacher search_result" style="margin-left: 10px;margin-right:10px;margin-top: 20px"><span>&nbsp;</span></div>
+    </div>
+    <!-- <div class="test set_in_div" style="display:none">test</div> -->
+    <div class="ServiceNode search_in_div" style="display:none">
+         <p><span style="margin-left: 40px;margin-right:20px;">service_node_name:</span><input type="text" name="service_node_name" class="input" placeholder="service_node_name" spellcheck="false"/><input type="button" value="Search" class="button button-primary button-rounded" style="margin-left: 20px" onclick="search_service_node()"/>
+         <div class="service_node_seacher search_result" style="margin-left: 10px;margin-right:10px;margin-top: 20px"><span>&nbsp;</span></div>
+    </div>
+</div>
+<div id="user_information_div" class="contain" style="display: none; padding: 0;padding-bottom: 20px"><span class="user_information_span">User information</span>
+    <table class="user_table table  table-bordered table-hover ">
+        <thead>
+            <td>attributes</td>
+            <td>value</td>
+        </thead>
+        <tbody class="user_table_body">
+            <tr class="">
+                <td class="">username</td>
+                <td>{% if username %}
+            {{username}}
+            {% else %}
+            <span class="fre_log">username</span>
+            {% endif %}
+            </td>
+            </tr>
+            <tr class="" >
+                <td>usersex</td>
+                <td>male</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div id="user_setting_div" class="contain" style="display: none; ">
+<span class="mod_pas">Modify Password</span>
+<form class="form" action="" name="modify_pasw" method="post">
+        
+        <p><span>OldPasw:</span><input type="password" name="password" class="input" placeholder="password" spellcheck="false"/></p>
+        <p><span>password:</span><input type="password" name="password" class="input" placeholder="password" spellcheck="false"/></p>
+        <p><span>repeat:</span><input type="password" name="password" class="input" placeholder="password" spellcheck="false"/></p>
+        <input type="submit" name="submit" value="submit" class="submit button button-raised button-primary button-pill"/>
+    </form>
+
+</div>
+<div id="alert" class="alert" style="display:none ;color:#fff;background-color: #1b93e1;width: 350px;height: 350px;position: fixed; top:250px;left: 540px;overflow-y:scroll;overflow-y :auto;border-radius: 20px;::-webkit-scrollbar{width:0px}">
+    <ol id="alert_top" class="alert_top" style="padding-left: 5%;margin-top:9%;font-size: 20px">
+    </ol>
+    <ol id="alert_top" class="alert_bot" style="margin-top: 10%">
+        
+
+    </ol>
+</div> 
+</div>
+</body>
+<script type="text/javascript">
+
+function servicenode(){
+    $(".contain").hide();
+    $("#servicenode_div").show();
+    $(".breadcrumb-item").text("ServiceNode");
+    var refresh='<span>(<a href="javascript:void(0)" onclick="get_available_service_nodes_info()" style="color:#1b93e1">refresh</a>)</span>'
+    $(".breadcrumb-item").append(refresh);
+    show_state="ServiceNode";
+}
+function service(){
+    $(".contain").hide();
+    $("#service_div").show();
+    $(".breadcrumb-item").text("Service");
+    var refresh='<span>(<a href="javascript:void(0)" onclick="get_available_services_info()" style="color:#1b93e1">refresh</a>)</span>'
+    $(".breadcrumb-item").append(refresh);
+    show_state="Service";
+}
+function search(){
+    $(".contain").hide();
+    $("#search_div").show();
+    $(".breadcrumb-item").text("Search");
+    show_state="Search";
+}
+function user(){
+    $(".contain").hide();
+    $("#user_information_div").show();
+    $(".breadcrumb-item").text("User > information");
+    show_state="User > information";
+}
+function user_set(){
+    $(".contain").hide();
+    $("#user_setting_div").show();
+    $(".breadcrumb-item").text("User > settting");
+    show_state="User > setting";
+}
+function loginout(){
+    $(".user_login1").hide();
+    $(".user_login2").show();
+    $(".user_alert").hide();
+    $(".contain").hide();
+    $("#index").show();
+    $.cookie('login_state','off');
+    window.location.reload();
+}
+
+function login(){
+    /*$.cookie('login_state','on');
+    $(".user_login2").hide();
+    $(".user_login1").show();*/
+    window.location.href="/login";
+}
+function user_alert(){
+    //$(".user_alert").show();
+    if($(".user_alert").is(":hidden")){
+    setTimeout('$(".user_alert").css("display","block");',100);
+    }
+}
+$(document).click(function(e){
+    var clickclass = $(e.target).attr("class");
+    if($(".user_alert").is(":visible")){
+        if(clickclass!="user_div"&&clickclass!="user_cls"){
+            $(".user_alert").hide();
+        }
+    }
+});
+ var $table = $('#fresh-table'),
+            $table2 = $('#fresh-table2'),
+            $alertBtn = $('#alertBtn'), 
+            full_screen = false,
+            window_height;
+            
+        $().ready(function(){
+            
+            window_height = $(window).height();
+            table_height = window_height - 100;
+            
+            
+            $table.bootstrapTable({
+                toolbar: ".toolbar",
+
+                showRefresh: true,
+                search: true,
+                showToggle: true,
+                showColumns: true,
+                pagination: true,
+                striped: true,
+                sortable: true,
+                height: table_height,
+                pageSize: 10,
+                pageList: [10,25,50,100],
+                
+                formatShowingRows: function(pageFrom, pageTo, totalRows){
+                    //do nothing here, we don't want to show the text "showing x of y from..." 
+                },
+                formatRecordsPerPage: function(pageNumber){
+                    return pageNumber + " rows visible";
+                },
+                icons: {
+                    refresh: 'fa fa-refresh',
+                    toggle: 'fa fa-th-list',
+                    columns: 'fa fa-columns',
+                    detailOpen: 'fa fa-plus-circle',
+                    detailClose: 'fa fa-minus-circle'
+                }
+            });
+
+            $table2.bootstrapTable({
+                toolbar: ".toolbar",
+
+                showRefresh: true,
+                search: true,
+                showToggle: true,
+                showColumns: true,
+                pagination: true,
+                striped: true,
+                sortable: true,
+                height: table_height,
+                pageSize: 10,
+                pageList: [10,25,50,100],
+                
+                formatShowingRows: function(pageFrom, pageTo, totalRows){
+                    //do nothing here, we don't want to show the text "showing x of y from..." 
+                },
+                formatRecordsPerPage: function(pageNumber){
+                    return pageNumber + " rows visible";
+                },
+                icons: {
+                    refresh: 'fa fa-refresh',
+                    toggle: 'fa fa-th-list',
+                    columns: 'fa fa-columns',
+                    detailOpen: 'fa fa-plus-circle',
+                    detailClose: 'fa fa-minus-circle'
+                }
+            });
+            
+          
+            
+            $(window).resize(function () {
+                /*$table.bootstrapTable('resetView');
+                $table2.bootstrapTable('resetView');*/
+            });    
+        });
+        
+
+        function operateFormatter(value, row, index) {
+           // if($(".toolbar2").text()=="ServiceNode"){
+            
+            return [
+                
+                '<a rel="tooltip" title="more-message" class="table-action check_service edit num'+index+'" href="javascript:void(0)" title="Edit" id="check" style="margin-left:">',
+                    'check',
+                '</a>'/*,*/
+                
+            ].join('');
+           /* }
+            else{
+                return [
+                
+                '<a rel="tooltip" title="ServiceNode" class="table-action check_servicenode edit num'+index+'" href="javascript:void(0)" title="Edit" id="check" style="margin-left:">',
+                    'check',
+                '</a>'/*,*/
+                
+           // ].join('');
+            //}*/
+        }
+
+$(document).on("click", ".check_service", function(e){
+    if($("#service_div").css("display")=="none"){
+    $("#alert").css("display","block");
+    $("#alert").animate({top:"200px"});
+    var clickclass = $(e.target).attr("class");
+    var num2=clickclass.substring(35);
+    $(".alert_top").text(list[num2].name+"的Service:");
+    $(".alert_bot").html("");
+    for(i=0;i<list[num2].service.length;i++){
+        $(".alert_bot").append('<li id="check_ser">'+list[num2].service[i]+'</li>');
+    }
+    }
+    else{
+        $("#alert").css("display","block");
+    $("#alert").animate({top:"200px"});
+    var clickclass = $(e.target).attr("class");
+    var num2=clickclass.substring(35);
+    $(".alert_top").text(ser[num2]+"的ServiceNode:");
+    $(".alert_bot").html("");
+    
+    for(i=0;i<list.length;i++)
+    {
+        for(j=0;j<list[i].service.length;j++)
+        {
+            
+            if(list[i].service[j]==ser[num2])
+            {
+                $(".alert_bot").append('<li id="check_ser" style="margin-left:10%">'+list[i].name+'</li>');
+            }
+        }
+    }
+    
+}
+});
+
+$(document).click(function(e){
+    var clickid = $(e.target).attr("id");
+    
+        if(clickid!="alert"&&clickid!="alert_top"&&clickid!="alert_bot"&&clickid!="check"&&clickid!="check_ser"){
+            $("#alert").animate({top:"250px"});
+            setTimeout('$("#alert").css("display","none");',300);
+        }
+    
+});
+
+$(document).on("click", ".search_turn", function(e){
+    $(".search_turn").removeClass("selected");
+    $(this).addClass("selected");
+    var sel=$(this).text();
+    $(".search_in_div").hide();
+    $("."+sel).show();
+});
+function user_alert(){
+    //$(".user_alert").show();
+    if($(".user_alert").is(":hidden")){
+    setTimeout('$(".user_alert").css("display","block");',100);
+    }
+}
+$(document).click(function(e){
+    var clickclass = $(e.target).attr("class");
+    if($(".user_alert").is(":visible")){
+        if(clickclass!="user_div"&&clickclass!="user_cls"){
+            $(".user_alert").hide();
+        }
+    }
+});
+function search_service(){
+    var service_id=$("input[name='service_id']").val();
+    get_service_info(service_id);
+}
+
+function search_service_node(){
+    var service_node_name=$("input[name='service_node_name']").val();
+    get_service_node_info(service_node_name);
+}
+</script>
+</html>

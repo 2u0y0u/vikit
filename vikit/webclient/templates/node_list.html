@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html class=" ">
+<head> </head>
+<body class="">
+{% include 'header.html' %}  {% include 'left.html' %}
+<main>
+    {% include 'banner.html' %}
+    <div class="container-fluid">
+        <h1 class="bread-crumb"> <strong>平台管理/ Service Nodes列表</strong></h1>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>From_Id</th>
+                <th>Ip</th>
+                <th>Ram_Percent</th>
+                <th>CPU_Percent</th><!-- INDEX FROM_ID IP RAM_PERCENT CPU_PERCENT -->
+            </tr>
+            </thead>
+            <tbody id="service_list">
+                <tr>
+                       <td>0021ca2178ce11e7ac9a000c29ef0054</td>
+                       <td>Dakota Rice</td>
+                       <td>172.168.1.1</td>
+                       <td>Niger</td>
+                       
+                   </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="6">
+                    <ul id="pagination-ddol" class="pagination-sm pull-right"></ul>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</main>
+</body>
+<script type="text/javascript">
+var nodes_num;
+var nodes=new Array();
+var i;
+$(document).ready(function(){
+    $("#service_list").empty();
+    get_available_service_nodes_info();
+
+});
+function ajax_get_service_nodes() {
+        $.ajax(
+            {
+                url: "{{ url_for('get_available_service_nodes') }}",
+                async:false,
+                success: function (result) {
+                    //add li to ul
+                    
+                    
+                    var service_node = jQuery.parseJSON(result);
+
+                    //$table.bootstrapTable('removeAll');
+                    nodes_num=service_node.length;
+                    for(i=0;i<nodes_num;i++){
+                        //get_service_node_info(service_node[i]);
+                        nodes[i]=service_node[i];
+                    }
+                    
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+    function get_available_service_nodes_info(){
+        $.ajax(
+            {
+                url: "{{ url_for('get_available_service_nodes_info') }}",
+                success: function (result) {
+                    show_service_node2(result);
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+    function show_service_node2(result){
+    var result2=result.replace('"','');
+    var result3=result2.substr(0, result2.length - 1);
+    var result4=result3.replace(/'/g,'"').replace(/</g,'"').replace(/>/g,'"');
+    var str="["+result4+"]";
+    var node = jQuery.parseJSON(str);
+    ajax_get_service_nodes();
+    for(i=0;i<nodes_num;i++){
+    $("#service_list").append('<tr><td>'+node[0][nodes[i]].from_id+'</td><td>'+node[0][nodes[i]].ip+'</td><td>'+node[0][nodes[i]].health_info.ram_percent+'</td><td>'+node[0][nodes[i]].health_info.cpu_percent+'</td></tr>')
+    }
+}
+</script>
+</html>

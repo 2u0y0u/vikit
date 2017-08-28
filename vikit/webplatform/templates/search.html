@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html class=" ">
+  {% include 'header.html' %}
+
+  <body class="">
+    {% include 'left.html' %}
+    <main>
+      {% include 'banner.html' %}
+      <div class="container-fluid">
+        <h1 class="bread-crumb">
+          <strong>
+            平台管理 / 查询
+          </strong>
+        </h1>
+        <form class="form-horizontal" action="" method="POST" data-action="notpjax" >
+            <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label">
+              target:
+            </label>
+            <div class="col-xs-8 form-inline">
+              <input type="radio" name="target" value="service" class="radio_line" checked/>&nbsp;service<input type="radio" name="target" value="service_node" class="radio_line" style="margin-left:5%"/>&nbsp;service node
+              
+            </div>
+            </div>
+          <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label">
+              Id:
+            </label>
+            <div class="col-xs-8 form-inline">
+              <input type="text" name="id" class="input form-control" placeholder="id" style="width:300px" spellcheck="false" />
+              <input type="button" onclick="search()" name="submit" value="search" class="button button-primary button-rounded button-small" style="margin-left: 15px;" />
+              
+            </div>
+            </div>
+        </form>
+      </div>
+      <div class="container-fluid">
+      <div class="form-horizontal" id="show_search_result" style="margin-top: 15px; display: none;">
+      </div>
+      </div>
+    </main>
+
+  </body>
+  <script>
+  function search(){
+    var target=$("input[name='target']:checked").val();
+    var id=$("input[name='id']").val();
+    if(target=="service"){
+      get_service_info(id);
+      
+    }
+    else if(target=="service_node"){
+      get_service_node_info(id);
+      
+    }
+  }
+    function get_service_info(service){
+        $.ajax(
+            {
+                url: "/get-service-info/"+service,
+                success: function (result) {
+                    show_service(result);
+                    
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+    function get_service_node_info(service_node){
+        $.ajax(
+            {
+                url: "/get-node-info/"+service_node,
+                success: function (result) {
+                    show_service_node(result);
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+function show_service_node(result){
+   $("#show_search_result").empty();
+   $("#show_search_result").css("display","block");
+   var result2=result.replace('"','');
+    var result3=result2.substr(0, result2.length - 1);
+    var result4=result3.replace(/'/g,'"').replace(/</g,'"').replace(/>/g,'"').replace(/,/g,"</br>").replace("{","").replace(/{/g,"</br>").replace(/}/g,"");
+    $("#show_search_result").append(result4);
+}
+function show_service(result){
+    $("#show_search_result").empty();
+    $("#show_search_result").css("display","block");
+    var result2=result.replace('"','');
+    var result3=result2.substr(0, result2.length - 1);
+    var result4=result3.replace(/'/g,'"').replace(/u"/g,'"').replace(/>/g,"").replace(/</g,"").replace(/,/g,"</br>").replace("{","").replace(/{/g,"").replace('"(',"</br>").replace(')"','').replace(/}/g,"").replace("LauncherInfo","</br>LauncherInfo").replace('"ack_timeout"','</br>"ack_timeout"');
+    
+   $("#show_search_result").append(result4);
+}       
+  </script>
+
+</html>

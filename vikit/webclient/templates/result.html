@@ -1,22 +1,67 @@
-{% extends '__base__.html' %}
 
-{% block result %}
-    <!-- <div id="reuslt_area"> -->
-{% if result %}
-    <div style="display: none"><p>{{ task_id }}</p></div>
-    <div style="word-wrap:break-word;word-break:break-all;"><p>{{ result }}</p></div>
-    <script type="text/javascript">
-    var task_id_text='<p>{{ task_id }}</p>';
-    var click_back='<a class="" href="/" style="position: absolute; z-index: 9999;font-size: 20px;color:#fff;margin-top:-30px" >click back</a>'
-    $(".breadcrumb-item").empty();
-    $(".breadcrumb-item").append(task_id_text);
-    $(".logo1").append(click_back);
-    </script>
-{% else %}
-    <p>task hasn't finished,please wait for 10 seconds</p>
-    <!-- refresh after 5 seconds -->
-    <script>setTimeout(window.location.reload(),10000)</script>
-{% endif %}
-    <!-- </div> -->
-{% endblock %}
+<!DOCTYPE html>
+<html class=" ">
+<head> </head>
+<body class="">
+{% include 'header.html' %}  {% include 'left.html' %}
+<main>
+    {% include 'banner.html' %}
+    <div class="container-fluid">
+        <h1 class="bread-crumb"> <strong>扫描中的任务</strong></h1>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>task_id</th>
+                <th>result</th>
+                <!-- <th>payload</th>
+                <th>config</th>
+                <th>result</th> -->
+            </tr>
+            
+            </thead>
+            <tbody id="resulist">
+            
+            {% if result %} 
+            <script type="text/javascript">
+            var t='{{result}}';
+            if(t=='this is result'){
+                var tr='<tr><th>test</th><th>test</th>';
+                $("#resulist").append(tr);
+            }
+            else{
+                /*var result1=t.replace(/u&#39;/g,'"').replace(/&#39;/g,'"').replace('{"task_result": ','').replace('(','').replace(')','}');
+                
+                var result2=result1.split(", ");
+                
+                var website=result2[0].replace(/"/g,'');
+                var payload=result2[1].replace(/"/g,'');
+                var config=result2[2]+','+result2[3];
+                var resultn=result2[4].replace(/"/g,'').replace('}','');*/
 
+                var a=t.replace(/&#39;/g,"'").replace(/u'/g,'"').replace(/'/g,'"').replace('(','[').replace(')',']').replace(/None/g,'"None"');
+                
+                var b=jQuery.parseJSON(a);
+                
+                var tr='<tr><th>'+b.task_id+'</th><th>{{result}}</th></tr>';
+                $("#resulist").append(tr);
+            }
+            </script>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="6">
+                    <ul id="pagination-ddol" class="pagination-sm pull-right"></ul>
+                    
+                    {% else %}
+                    <p>task hasn't finished,please wait for 10 seconds</p>
+                    <!-- refresh after 5 seconds -->
+                    <script>setTimeout(window.location.reload(),10000)</script>
+                    {% endif %}
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class=" ">
+  {% include 'header.html' %}
+
+  <body class="">
+    {% include 'left.html' %}
+    <main>
+      {% include 'banner.html' %}
+      <div class="container-fluid">
+        <h1 class="bread-crumb">
+          <strong>
+            漏洞检测 / 添加扫描
+          </strong>
+        </h1>
+        <form class="form-horizontal" action="/execute" method="POST" data-action="notpjax" onsubmit="return check()">
+        <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label">
+              module:
+            </label>
+            <div class="col-xs-8 form-inline">
+              <select name="module" class="form-control" id="scan-mode">
+                <option value="0" data="0" selected="slected">
+                  SelectModule
+                </option>
+                <!-- <option value="1" data="1" >
+                  专家模式
+                </option> --><!-- line 582 -->
+              </select>
+            </div>
+          </div>
+          <div class="form-group form-group-sm form-expert">
+            <label class="col-xs-2 control-label">
+              Help:
+            </label>
+            <div class="col-xs-8">
+              <div class="checkbox">
+              <p id="module_help_name"></p>
+                <div id="module_help"></div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label">
+              Target:
+            </label>
+            <div class="col-xs-8 form-inline">
+              <input type="text" name="target" class="input form-control" placeholder="target" style="width:300px" spellcheck="false"/>
+              
+            </div>
+            </div>
+          <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label">
+              payload:
+            </label>
+            <div class="col-xs-8">
+          <!-- <textarea id="domain" name="domain" class="form-control" rows="6" placeholder="target" ></textarea> -->
+          <textarea name="payload" placeholder="payload" rows="6" class=" form-control" style="resize: none"  spellcheck="false" spellcheck="false" ></textarea>
+            </div>
+          </div>
+          <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label">
+             config:
+            </label>
+            <div class="col-xs-8">
+          <textarea name="config" placeholder="config" class="form-control" rows="6" style="resize: none" spellcheck="false" id="param" spellcheck="false"></textarea>
+          <span class="form-control-static">
+                config format: {"param1":"str1","param2":"str2"}
+              </span>
+            </div>
+          </div>
+          <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label">
+              offline:
+            </label>
+            <div class="col-xs-8 form-inline">
+              <input type="radio" name="offline" value="1" class="radio_line" checked="checked"/>&nbsp;online<input type="radio" name="offline" value="0" class="radio_line" style="margin-left:5%"/>&nbsp;offline
+              
+            </div>
+            </div>
+          
+          <!-- <div class="form-group form-group-sm form-expert">
+            <label class="col-xs-2 control-label">
+              配置模板
+            </label>
+            <div class="col-xs-8 form-inline">
+              <table class="table form-table form-inline">
+                <tbody>
+                  <tr>
+                    <th width="104">
+                      Cookie 设置
+                    </th>
+                    <td>
+                      <input type="text" class="form-control" value="" name="scan_cookie" id="scan_cookie">
+                      <span class="form-control-static">
+                        可不填，默认为系统自带 Cookie
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>
+                      UA 设置
+                    </th>
+                    <td>
+                      <input type="text" class="form-control" value="Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36" name="scan_ua" id="scan_ua">
+                      <span class="form-control-static">
+                        可不填，默认为系统自带 User-Agent
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>
+                      <td>
+                      </td>
+                    </th>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div> -->
+          <div class="form-group form-group-sm">
+            <div class="col-xs-offset-2 col-xs-8">
+                <input type="submit" onclick="" name="submit" value="Submit" class="btn btn-sm"/>
+                
+              
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+
+  </body>
+  <script>
+    $(document).ready(function(){
+      $("#start").click();
+    
+    
+      
+      $.ajax(
+            {
+                url: "{{ url_for('start') }}",
+                async:false,
+                success: function (result) {
+                    if(result == 'success'){
+                        //alert('start success');
+                        setTimeout("ajax_get_mods()", 1000);
+                        //alert('start success');
+                    }
+                },
+                error:function () {
+                    alert('ajax start request failed');
+                }
+
+            }
+        )
+    
+  });
+    function ajax_get_mods() {
+        $.ajax(
+            {
+                url: "{{ url_for('get_available_module') }}",
+
+                success: function (result) {
+                    //add li to ul
+                    
+                    show_modules(result);
+                    
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+
+    function show_modules(result) {
+
+        var mod_list = jQuery.parseJSON(result)
+        var j; 
+        $("#scan-mode").empty();
+        $("#scan-mode").append('<option value="0" data="0" selected="slected">SelectModule</option>');
+        for (var i = 0; i < mod_list.length; i++) {
+          j=i+1;
+          $("#scan-mode").append('<option value="'+mod_list[i]+'" data="'+j+'">'+mod_list[i]+'</option>');
+        }
+    }
+    function module_help(k){
+      
+      $("#module_help").empty();
+      $.ajax(
+            {
+                url: "/help/"+k,
+                success: function (result) {
+                    //$("#module_help").empty();
+                    //$("#module_help").html(result);
+                    show_help(result);
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+      /*temp_json_obj=jQuery.parseJSON(result);
+        //module_help=temp_json_obj[''];
+        help_str='Author:'+temp_json_obj['AUTHOR']+'</br>'+'Demands:'+temp_json_obj['DEMANDS']+'</br>'+'Result_Description:'+temp_json_obj['RESULT_DESC']+'</br>'+'Description:'+temp_json_obj['DESCRIPTION']+'</br>';
+        module_name=temp_json_obj['NAME'];
+        $('#module_help_name').text(module_name);
+        $('#module_help').html(help_str);*/
+    }
+    function show_help(result){
+      temp_json_obj=jQuery.parseJSON(result);
+        //module_help=temp_json_obj[''];
+        help_str='Author:'+temp_json_obj['AUTHOR']+'</br>'+'Demands:'+temp_json_obj['DEMANDS']+'</br>'+'Result_Description:'+temp_json_obj['RESULT_DESC']+'</br>'+'Description:'+temp_json_obj['DESCRIPTION']+'</br>';
+        module_name=temp_json_obj['NAME'];
+        //$('#module_help_name').text(module_name);
+        $('#module_help').html(help_str);
+    }
+    function check(){
+    
+    re=/[{]+["]+[param1]+["]+[:]+["]+\w+["]+[,]+["]+[param2]+["]+[:]+["]+\w+["]+[}]+$/;
+    param=$("#param").val();
+    var module=$("option:selected").val();
+    
+    if(re.test(param)){
+      if(module!="0"){
+        return true;
+      
+      }
+      else{
+        alert("choice modules");
+        return false;
+      }
+    }
+    else{
+        alert("config error!");
+        return false;
+    }
+ }
+  </script>
+
+</html>

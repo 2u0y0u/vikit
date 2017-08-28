@@ -1,0 +1,312 @@
+<button id="start" class="button button-action button-pill" style="display: block; margin-left: 40%; margin-top: -20%;">start</button>
+<div id="modules" style="margin-top: 15px;">
+    <ul id="menu">
+        <li onclick="AddService()"><a href="javascript:void(0)"><span>AddDefaultService</span><div class="clearfix"></div></a></li>
+        <li id="menu-academico" onclick="servicenode()"><a href="javascript:void(0)"><span>ServiceNode</span><div class="clearfix"></div></a></li>
+        <li onclick="service()"><a href="javascript:void(0)"><span>Service</span><div class="clearfix"></div></a></li>
+        <li onclick="search()"><a href="javascript:void(0)"><span>Search</span><div class="clearfix"></div></a></li>
+        <!-- <li onclick=""><a href="javascript:void(0)"><span>Set</span><div class="clearfix"></div></a></li> -->
+    </ul>
+
+</div>
+
+
+<script type="text/javascript">
+var i;
+var service_id;
+var index;
+var nodes=new Array();
+var nodes_num;
+var nodes_state=0;
+var services=new Array();
+var services_num;
+function AddService(){
+    if($.cookie('state')=='online'){
+        $(".breadcrumb-item").text("add default service");
+        $(".contain").hide();
+        $("#index").show();
+        $("#index").empty();
+        var add_form='<p><span>module_name:</span><input type="text" name="module_name" class="input" placeholder="module_name"/></p>'+'<p><span>port:</span><input type="text" name="port" class="input" placeholder="port"/></p>'+'<input type="button" value="Submit" class="submit button button-raised button-primary button-pill" onclick="add_default_service()"/>';
+        $("#index").append(add_form);
+    }
+    else{
+        alert("press start first!");
+    }
+}
+function add_default_service() {
+        var module_name=$("input[name='module_name']").val();
+        var port=$("input[name='port']").val();
+        $.ajax(
+            {
+                url: "/add-default-service"+"?module_name="+module_name+"&port="+port,
+                success: function (result) {
+                    //add li to ul
+                    
+                    //alert(result);
+                    $("input[name='module_name']").val('');
+                    $("input[name='port']").val('');
+                    alert(result);
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+
+     function ajax_get_service() {
+        $.ajax(
+            {
+                url: "{{ url_for('get_available_services') }}",
+                async:false,
+                success: function (result) {
+                    //add li to ul
+                    
+                    var service = jQuery.parseJSON(result);
+                    services_num=service.length;
+                    for(i=0;i<service.length;i++){
+                        //get_service_info(service[i]);
+                        services[i]=service[i];
+                        
+                    }
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+    function ajax_get_service_nodes() {
+        $.ajax(
+            {
+                url: "{{ url_for('get_available_service_nodes') }}",
+                async:false,
+                success: function (result) {
+                    //add li to ul
+                    
+                    
+                    var service_node = jQuery.parseJSON(result);
+
+                    //$table.bootstrapTable('removeAll');
+                    nodes_num=service_node.length;
+                    for(i=0;i<nodes_num;i++){
+                        //get_service_node_info(service_node[i]);
+                        nodes[i]=service_node[i];
+                    }
+                    
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+    function get_service_info(service){
+        $.ajax(
+            {
+                url: "/get-service-info/"+service,
+                success: function (result) {
+                    show_service(result);
+                    
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+    function get_service_node_info(service_node){
+        $.ajax(
+            {
+                url: "/get-node-info/"+service_node,
+                success: function (result) {
+                    show_service_node(result);
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+    function get_available_service_nodes_info(){
+        $.ajax(
+            {
+                url: "{{ url_for('get_available_service_nodes_info') }}",
+                success: function (result) {
+                    show_service_node2(result);
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+    function get_available_services_info(){
+        if(nodes_state==1){
+        $.ajax(
+            {
+                url: "{{ url_for('get_available_services_info') }}",
+                success: function (result) {
+                    //add li to ul
+                    show_service2(result);
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+    else{
+        alert("get service-nodes first")
+    }
+    }
+    function ajax_start_proxy(){
+         $.ajax(
+            {
+                url: "{{ url_for('start') }}",
+                async:false,
+                success: function (result) {
+                    if(result == 'success'){
+                        alert('start success');
+                        $.cookie('state','online');
+                        $(".breadcrumb-item").text("Started");
+                        $("#index").text("You are now connected to the platform")
+                    }
+                },
+                error:function () {
+                    alert('ajax start request failed');
+                }
+
+            }
+        )
+    }
+
+
+    function ajax_stop_proxy(){
+         $.ajax(
+            {
+                url: "{{ url_for('shutdown') }}",
+                async:false,
+                success: function (result) {
+                    if(result == 'closed'){
+                        alert('stop success');
+                        $.cookie('state','offline');
+                        $(".breadcrumb-item").text("Press start");
+                        $("#index").text("Press start to connected to the platform")
+                    }
+                },
+                error:function () {
+                    alert('ajax stop request failed');
+                }
+
+            }
+        )
+    }
+
+    var interval_id;
+    $("#start").click(function () {
+            if ($(this).text() == 'start') {
+                //start the proxy
+                ajax_start_proxy();
+                if ($.cookie('state')=='online')
+                {
+                    /*add_default_service();
+                    ajax_get_service_nodes();
+                    ajax_get_service();*/
+                    //ajax_get_service_nodes();
+                    //set interval
+                    //interval_id= setInterval("ajax_get_mods()", 5000);
+                    //set text to stop
+                    $(this).text('stop');
+                    $(this).removeClass("button-action");
+                    $(this).addClass("button-caution");
+                }
+                else{
+                    alert('start proxy failed');
+                }
+            }
+            else {//stop option
+                //clear interval
+                clearInterval(interval_id)
+                //send to close proxy 
+                ajax_stop_proxy();
+                $(this).text('start');
+                $(this).removeClass("button-caution");
+                $(this).addClass("button-action");
+            }
+        }
+    );
+function show_service_node2(result){
+    var result2=result.replace('"','');
+    var result3=result2.substr(0, result2.length - 1);
+    var result4=result3.replace(/'/g,'"').replace(/</g,'"').replace(/>/g,'"');
+    var str="["+result4+"]";
+    var node = jQuery.parseJSON(str);
+    ajax_get_service_nodes();    
+    $table.bootstrapTable('removeAll');
+    index=$table.bootstrapTable('getData').length;
+    for(i=0;i<nodes_num;i++){
+        $table.bootstrapTable("insertRow",{
+            index:index,
+            row:{
+                id:index,
+                service_name:node[0][nodes[i]].from_id,
+                salary:node[0][nodes[i]].ip,
+                country:node[0][nodes[i]].health_info.ram_percent,
+                param:node[0][nodes[i]].health_info.cpu_percent
+                
+               
+            }
+        });
+    }
+    nodes_state=1;
+    $(".breadcrumb-item span a").text("refresh");
+}
+function show_service_node(result){
+   $(".service_node_seacher").empty();
+   var result2=result.replace('"','');
+    var result3=result2.substr(0, result2.length - 1);
+    var result4=result3.replace(/'/g,'"').replace(/</g,'"').replace(/>/g,'"').replace(/,/g,"</br>").replace("{","").replace(/{/g,"</br>").replace(/}/g,"");
+    $(".service_node_seacher").append(result4);
+}
+function show_service2(result){
+    var result2=result.replace('"','');
+    var result3=result2.substr(0, result2.length - 1);
+    var result4=result3.replace(/'/g,'"').replace(/u"/g,'"').replace("<ServiceInfo Desc:<ServiceDesc:","").replace("> LauncherInfo:<ServiceLaucherInfo config",', "LauncherInfo"').replace(/>/g,"").replace(/</g,"");
+    var str="["+result4+"]";
+    var service = jQuery.parseJSON(str);
+    ajax_get_service();
+    $table2.bootstrapTable('removeAll');
+    index=$table2.bootstrapTable('getData').length;
+    for(i=0;i<nodes_num;i++){
+        $table2.bootstrapTable("insertRow",{
+            index:index,
+            row:{
+                id:index,
+                service_name:services[i],
+                salary:service[0][services[i]].ip,
+                country:service[0][services[i]].service_info.NAME,
+                param:service[0][services[i]].service_node_id
+                
+               
+            }
+        });
+    }
+    $(".breadcrumb-item span a").text("refresh");
+}
+function show_service(result){
+    $(".service_seacher").empty();
+    var result2=result.replace('"','');
+    var result3=result2.substr(0, result2.length - 1);
+    var result4=result3.replace(/'/g,'"').replace(/u"/g,'"').replace(/>/g,"").replace(/</g,"").replace(/,/g,"</br>").replace("{","").replace(/{/g,"").replace('"(',"</br>").replace(')"','').replace(/}/g,"").replace("LauncherInfo","</br>LauncherInfo").replace('"ack_timeout"','</br>"ack_timeout"');
+    
+   $(".service_seacher").append(result4);
+}                                                                                                  
+</script>

@@ -1,0 +1,133 @@
+      <style type="text/css">
+      .user_alert{
+    background-color:#fff;
+    width: 10%;
+    padding:3px;
+    padding-left: 5px;
+    float: right;
+    display: none;
+    margin-right:4%;
+    margin-top: -0.2%;
+    border: 0.5px #eee solid;
+    box-shadow: 1px 0 2px #333;
+}
+.user_alert a{
+    color: #000;
+    width: 100%;
+    display: block;
+    //margin-bottom: -10px;
+}
+.user_alert a:hover{
+    background-color: #eee;
+}
+
+      </style>
+      <div class="navbar navbar-default navbar-static-top" role="navigation">
+      <button  id="start" style="display: none;">start</button>
+        <div class="container-fluid">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="javascript:void(0)" onclick="user_alert()">
+                {% if username %}
+            {{username}}
+            {% else %}
+            <span class="fre_log">username</span>
+            {% endif %}
+              </a>
+            </li>
+            
+            <li>
+              <a href="/">
+          
+            <span>平台管理</span>
+            
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="user_alert" >
+        <a href="javascript:void(0)" class="user_cls" onclick="user()">information</a>
+        <a href="javascript:void(0)" class="user_cls" onclick="user_set()">setting</a>
+        <a href="javascript:void(0)" class="user_cls" onclick="loginout()">loginout</a>
+      </div>
+      </div>
+      <script type="text/javascript">
+$(document).ready(function(){
+      $("#start").click();
+      $.ajax(
+            {
+                url: "{{ url_for('start') }}",
+                async:false,
+                success: function (result) {
+                    if(result == 'success'){
+                        //alert('start success');
+                        
+                        //alert('start success');
+                    }
+                },
+                error:function (e) {
+                    alert('ajax start request failed');
+                    
+                }
+
+            }
+        )
+    });
+function user_alert(){
+    //$(".user_alert").show();
+    if($(".user_alert").is(":hidden")){
+    setTimeout('$(".user_alert").css("display","block");',100);
+    }
+}
+function user(){
+  alert("information");
+}
+function user_set(){
+  alert("setting");
+}
+$(document).click(function(e){
+    var clickclass = $(e.target).attr("class");
+    if($(".user_alert").is(":visible")){
+        if(clickclass!="user_div"&&clickclass!="user_cls"){
+            $(".user_alert").hide();
+        }
+    }
+});
+$(document).ready(function(){
+        if($.cookie('login_state')==null){
+            $.cookie('login_state','off');
+        }
+        if($.cookie('username')==null){
+            $.cookie('username','username');
+        }
+        var usr=$(".fre_log").text();
+        
+        if(usr=='username'){
+            $(".fre_log").text($.cookie('username'));
+        }
+
+        
+     });
+function loginout(){
+  $.ajax(
+            {
+                url: "{{ url_for('shutdown') }}",
+                async:false,
+                success: function (result) {
+                    if(result == 'success'){
+                        //alert('start success');
+                        
+                        //alert('start success');
+                    }
+                },
+                error:function (e) {
+                    alert('ajax start request failed');
+                    
+                }
+
+            }
+        )
+    $.cookie('login_state','off');
+    window.location.href="/login";
+}
+</script>

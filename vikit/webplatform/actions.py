@@ -148,3 +148,24 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+
+@client_app.route('/AndDefaultService', methods=['GET'])
+def AndDefaultService():
+    """"""
+    return render_template('AndDefaultService.html')
+
+@client_app.route('/service_node', methods=['GET'])
+def service_node():
+    """"""
+    return render_template('node_list.html')
+
+@client_app.route('/service', methods=['GET'])
+def service():
+    """"""
+    return render_template('service_list.html')
+
+@client_app.route('/search', methods=['GET'])
+def search():
+    """"""
+    return render_template('search.html')
+
