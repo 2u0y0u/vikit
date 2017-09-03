@@ -593,6 +593,9 @@ $__System.registerDynamic("a", [], false, function(__require, __exports, __modul
         else if (v == 2) {
           $('div.form-expert').show();
         }
+        else{
+          $('div.form-expert').show();
+        }
       });
       $('#start-time').on('change', function() {
         var v = $(this).find('option:selected').attr('data');

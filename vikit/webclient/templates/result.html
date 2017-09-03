@@ -1,65 +1,128 @@
 
 <!DOCTYPE html>
 <html class=" ">
-<head> </head>
+<head> 
+<link rel="stylesheet" href="{{ url_for('static', filename='load_style.css') }}">
+<style type="text/css">
+.load_text{
+    position: absolute;
+    right: 33%;
+    top:40%;
+}
+tbody>tr>th{
+    vertical-align: bottom;
+  //border-bottom: 2px solid #ddd;
+  font-weight: normal;
+    //border-bottom: 1px solid #efefef;
+    //background-color: #dddddd;
+    padding: 7px 8px;
+    width:15%;
+    //text-align: center;
+
+
+}
+.table ,tbody{
+    border: none;
+}
+.res_th{
+    font-size: 17px;
+    display: inline-block;
+    width: 18%;
+    //box-shadow:0px 2px 0px #e5e5e5;
+}
+.res_th h4{
+    padding-left: 2px;
+}
+tbody>tr>td:hover{
+    background-color: #f8f8fa;
+}
+tbody>tr>td{
+    border: 1px solid #e5e5e5;
+    display: inline-block;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    margin-left: 5px;
+    height: 100%;
+    width: 95%;
+</style>
+</head>
 <body class="">
 {% include 'header.html' %}  {% include 'left.html' %}
+<script type=text/javascript src="{{ url_for('static', filename='load_js.js') }}"></script>
 <main>
     {% include 'banner.html' %}
     <div class="container-fluid">
         <h1 class="bread-crumb"> <strong>扫描中的任务</strong></h1>
-        <table class="table table-hover">
+        <table class="table" style="border: none">
             <thead>
+            <!-- <tr>
+                <th>task_id</th>
+                <td>result</td>
+                <th>payload</th>
+                <th>config</th>
+                <th>result</th>
+            </tr>
             <tr>
                 <th>task_id</th>
+                <td>result</td>
+                <th>payload</th>
+                <th>config</th>
                 <th>result</th>
+            </tr> -->
+            
+            </thead>
+            <tbody id="resulist">
+             <tr >
+                <th class="res_th " style="border: none;padding-bottom: 5px;"><h4 style="border-left: 2px solid #AAAAAA;">task_id:</h4></th>
+                
                 <!-- <th>payload</th>
                 <th>config</th>
                 <th>result</th> -->
             </tr>
-            
-            </thead>
-            <tbody id="resulist">
-            
+            <tr id="task_id">
+                
+            </tr>
+            <tr >
+                <th class="res_th" style="border: none;padding-bottom: 5px;"><h4 style="border-left: 2px solid #AAAAAA;">result:</h4></th>
+            </tr>
+            <tr id="result">
+                
+            </tr>
             {% if result %} 
             <script type="text/javascript">
             var t='{{result}}';
             if(t=='this is result'){
-                var tr='<tr><th>test</th><th>test</th>';
-                $("#resulist").append(tr);
+                var t1='<td style="border-left: none;border-right: none; ">test</td>';
+                var t2='<td style="border-left: none;border-right: none; ">test</td>';
+                $("#task_id").append(t1);
+                $("#result").append(t2);
             }
             else{
-                /*var result1=t.replace(/u&#39;/g,'"').replace(/&#39;/g,'"').replace('{"task_result": ','').replace('(','').replace(')','}');
-                
-                var result2=result1.split(", ");
-                
-                var website=result2[0].replace(/"/g,'');
-                var payload=result2[1].replace(/"/g,'');
-                var config=result2[2]+','+result2[3];
-                var resultn=result2[4].replace(/"/g,'').replace('}','');*/
-
-                var a=t.replace(/&#39;/g,"'").replace(/u'/g,'"').replace(/'/g,'"').replace('(','[').replace(')',']').replace(/None/g,'"None"');
-                
-                var b=jQuery.parseJSON(a);
-                
-                var tr='<tr><th>'+b.task_id+'</th><th>{{result}}</th></tr>';
-                $("#resulist").append(tr);
+                var t1='<td style="border-left: none;border-right: none; ">{{task_id}}</td>';
+                var t2='<td style="border-left: none;border-right: none; ">{{result}}</td>';
+                $("#task_id").append(t1);
+                $("#result").append(t2);
             }
             </script>
             </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="6">
-                    <ul id="pagination-ddol" class="pagination-sm pull-right"></ul>
+            
                     
                     {% else %}
-                    <p>task hasn't finished,please wait for 10 seconds</p>
+                    
                     <!-- refresh after 5 seconds -->
-                    <script>setTimeout(window.location.reload(),10000)</script>
-                    {% endif %}
-                </td>
-            </tr>
-            </tfoot>
+                    <script>
+                    window.onload = function(){
+                        setTimeout("location.reload()",5000);
+                    }
+                    $(".table").empty();
+                    var load='<ul id="spinners" style="margin-top:-100px;"><li class="active" data-id="4"><div id="preloader_4"><span></span><span></span><span></span><span></span><span></span></div></li></ul>';
+                    $(".table").append(load);
+                    </script>
+                    
+                
+            <div class="load_text">task hasn't finished,please wait for 5 seconds</div>
+            {% endif %}
+            
         </table>
     </div>
 </main>

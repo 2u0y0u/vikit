@@ -4,9 +4,10 @@
     width: 10%;
     padding:3px;
     padding-left: 5px;
+    position: absolute;
     float: right;
     display: none;
-    margin-right:3%;
+    right:4%;
     margin-top: -0.2%;
     border: 0.5px #eee solid;
     box-shadow: 1px 0 2px #333;
@@ -37,14 +38,19 @@
             </li>
             
             <li>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <a href="javascript:void(0)" onclick="client()">
+          
+            <span>客户端</span>
+            
+              </a>
             </li>
           </ul>
         </div>
         <div class="user_alert" >
-        <a href="javascript:void(0)" class="user_cls" onclick="user()">information</a>
-        <a href="javascript:void(0)" class="user_cls" onclick="user_set()">setting</a>
-        <a href="javascript:void(0)" class="user_cls" onclick="loginout()">loginout</a>
+        <a href="javascript:void(0)" class="user_cls" onclick="user()">个人信息</a>
+        <a href="javascript:void(0)" class="user_cls" onclick="user_set()">用户管理</a>
+        <a href="javascript:void(0)" class="user_cls" onclick="user_set()">修改密码</a>
+        <a href="javascript:void(0)" class="user_cls" onclick="loginout()">退出登录</a>
       </div>
       </div>
       <script type="text/javascript">
@@ -63,7 +69,7 @@ $(document).ready(function(){
                 },
                 error:function (e) {
                     alert('ajax start request failed');
-                    alert(e);
+                    
                 }
 
             }
@@ -105,7 +111,32 @@ $(document).ready(function(){
         
      });
 function loginout(){
+  $.ajax(
+            {
+                url: "{{ url_for('shutdown') }}",
+                async:false,
+                success: function (result) {
+                    if(result == 'success'){
+                        //alert('start success');
+                        
+                        //alert('start success');
+                    }
+                },
+                error:function (e) {
+                    alert('ajax start request failed');
+                    
+                }
+
+            }
+        )
     $.cookie('login_state','off');
+
     window.location.href="/login";
+}
+function client(){
+  var protocol= window.location.protocol;
+  var hostname=window.location.hostname;
+  var url=protocol+'//'+hostname+':8080';
+  window.location.href=url;
 }
 </script>

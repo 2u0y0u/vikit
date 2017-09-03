@@ -78,45 +78,7 @@
             </div>
             </div>
           
-          <!-- <div class="form-group form-group-sm form-expert">
-            <label class="col-xs-2 control-label">
-              配置模板
-            </label>
-            <div class="col-xs-8 form-inline">
-              <table class="table form-table form-inline">
-                <tbody>
-                  <tr>
-                    <th width="104">
-                      Cookie 设置
-                    </th>
-                    <td>
-                      <input type="text" class="form-control" value="" name="scan_cookie" id="scan_cookie">
-                      <span class="form-control-static">
-                        可不填，默认为系统自带 Cookie
-                      </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>
-                      UA 设置
-                    </th>
-                    <td>
-                      <input type="text" class="form-control" value="Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36" name="scan_ua" id="scan_ua">
-                      <span class="form-control-static">
-                        可不填，默认为系统自带 User-Agent
-                      </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>
-                      <td>
-                      </td>
-                    </th>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div> -->
+          
           <div class="form-group form-group-sm">
             <div class="col-xs-offset-2 col-xs-8">
                 <input type="submit" onclick="" name="submit" value="Submit" class="btn btn-sm"/>
@@ -131,10 +93,7 @@
   </body>
   <script>
     $(document).ready(function(){
-      $("#start").click();
-    
-    
-      
+      if($.cookie('state')=='online'){
       $.ajax(
             {
                 url: "{{ url_for('start') }}",
@@ -152,8 +111,17 @@
 
             }
         )
-    
+    }
+    else{
+      $(".start_state").click(function(){
+        
+        setTimeout("ajax_get_mods()", 1000);
+           
+       
+      });
+    }
   });
+
     function ajax_get_mods() {
         $.ajax(
             {
@@ -194,6 +162,7 @@
                     //$("#module_help").empty();
                     //$("#module_help").html(result);
                     show_help(result);
+
                 },
                 error:function () {
                     alert('ajax get_mods request error');
@@ -209,6 +178,7 @@
         $('#module_help').html(help_str);*/
     }
     function show_help(result){
+      
       temp_json_obj=jQuery.parseJSON(result);
         //module_help=temp_json_obj[''];
         help_str='Author:'+temp_json_obj['AUTHOR']+'</br>'+'Demands:'+temp_json_obj['DEMANDS']+'</br>'+'Result_Description:'+temp_json_obj['RESULT_DESC']+'</br>'+'Description:'+temp_json_obj['DESCRIPTION']+'</br>';

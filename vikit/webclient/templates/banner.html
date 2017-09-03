@@ -1,110 +1,89 @@
-      <style type="text/css">
-      .user_alert{
-    background-color:#fff;
-    width: 10%;
-    padding:3px;
-    padding-left: 5px;
-    float: right;
-    display: none;
-    margin-right:3%;
-    margin-top: -0.2%;
-    border: 0.5px #eee solid;
-    box-shadow: 1px 0 2px #333;
-}
-.user_alert a{
-    color: #000;
-    width: 100%;
-    display: block;
-    //margin-bottom: -10px;
-}
-.user_alert a:hover{
-    background-color: #eee;
-}
-
-      </style>
-      <div class="navbar navbar-default navbar-static-top" role="navigation">
+<div class="navbar navbar-default navbar-static-top" role="navigation">
       <button  id="start" style="display: none;">start</button>
         <div class="container-fluid">
           <ul class="nav navbar-nav navbar-right">
             <li>
-              <a href="javascript:void(0)" onclick="user_alert()">
-                {% if username %}
-            {{username}}
-            {% else %}
-            <span class="fre_log">username</span>
-            {% endif %}
+            <a href="javascript:void(0)" id="start" class="start_state" onclick="start()">
+            
+            <span class="fre_log">start</span>
+            
               </a>
             </li>
             
             <li>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <a href="javascript:void(0)" onclick="platform()">平台管理</a>
             </li>
           </ul>
         </div>
-        <div class="user_alert" >
-        <a href="javascript:void(0)" class="user_cls" onclick="user()">information</a>
-        <a href="javascript:void(0)" class="user_cls" onclick="user_set()">setting</a>
-        <a href="javascript:void(0)" class="user_cls" onclick="loginout()">loginout</a>
+        
       </div>
-      </div>
-      <script type="text/javascript">
+<script type="text/javascript">
 $(document).ready(function(){
-      $("#start").click();
+        if($.cookie('state')==null){
+            $.cookie('state','offline');
+        }
+
+        //use to handle refresh
+        if($.cookie('state')=='online'){
+            start();
+        }
+     });
+function start(){
+  var state=$(".fre_log").text();
+  
+  if(state=='start'){
       $.ajax(
             {
                 url: "{{ url_for('start') }}",
                 async:false,
                 success: function (result) {
                     if(result == 'success'){
-                        //alert('start success');
+                      if($.cookie('state')=='offline'){
+                        alert('start success');
+                        $.cookie('state','online');
+                      }
                         
+                        $(".fre_log").text('stop');
+                        $("#start").removeClass("start_state");
                         //alert('start success');
                     }
                 },
-                error:function () {
+                error:function (e) {
                     alert('ajax start request failed');
+                    alert(e);
                 }
 
             }
         )
-    });
-function user_alert(){
-    //$(".user_alert").show();
-    if($(".user_alert").is(":hidden")){
-    setTimeout('$(".user_alert").css("display","block");',100);
-    }
-}
-function user(){
-  alert("information");
-}
-function user_set(){
-  alert("setting");
-}
-$(document).click(function(e){
-    var clickclass = $(e.target).attr("class");
-    if($(".user_alert").is(":visible")){
-        if(clickclass!="user_div"&&clickclass!="user_cls"){
-            $(".user_alert").hide();
-        }
-    }
-});
-$(document).ready(function(){
-        if($.cookie('login_state')==null){
-            $.cookie('login_state','off');
-        }
-        if($.cookie('username')==null){
-            $.cookie('username','username');
-        }
-        var usr=$(".fre_log").text();
-        
-        if(usr=='username'){
-            $(".fre_log").text($.cookie('username'));
-        }
+  }
+  else{
+    
+    $.ajax(
+            {
+                url: "{{ url_for('shutdown') }}",
+                async:false,
+                success: function (result) {
 
-        
-     });
-function loginout(){
-    $.cookie('login_state','off');
-    window.location.href="/login";
+                    if(result == 'closed'){
+                        alert('stop success');
+                        $(".fre_log").text('start');
+                        $.cookie('state','offline');
+                        $("#start").addClass("start_state");
+                    }
+                },
+                error:function (e) {
+                    alert('ajax start request failed');
+                    
+                }
+
+            }
+        )
+  }
+}
+function platform(){
+  var protocol= window.location.protocol;
+  var hostname=window.location.hostname;
+  var url=protocol+'//'+hostname+':8081';
+  window.location.href=url;
 }
 </script>
