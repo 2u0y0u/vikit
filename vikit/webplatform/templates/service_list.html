@@ -89,9 +89,10 @@ function get_available_services_info(){
 function show_service2(result){
     var result2=result.replace('"','');
     var result3=result2.substr(0, result2.length - 1);
-    var result4=result3.replace(/'/g,'"').replace(/u"/g,'"').replace("<ServiceInfo Desc:<ServiceDesc:","").replace("> LauncherInfo:<ServiceLaucherInfo config",', "LauncherInfo"').replace(/>/g,"").replace(/</g,"");
+    var result4=result3.replace(/'/g,'"').replace(/u"/g,'"').replace("<ServiceInfo Desc:<ServiceDesc:","").replace("> LauncherInfo:<ServiceLaucherInfo config",', "LauncherInfo"').replace(/>/g,"").replace(/</g,"").replace(/ServiceInfo Desc:ServiceDesc: /g,'"').replace(/ LauncherInfo:ServiceLaucherInfo config:/g,',"LauncherInfo":').replace(/"{"/g,'{"');
     var str="["+result4+"]";
-    var service = jQuery.parseJSON(str);
+    
+ var service = jQuery.parseJSON(str);
     ajax_get_service();
     
     for(i=0;i<services_num;i++){
@@ -100,3 +101,6 @@ function show_service2(result){
 }
 </script>
 </html>
+
+
+

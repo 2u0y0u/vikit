@@ -12,7 +12,7 @@
             漏洞检测 / 添加扫描
           </strong>
         </h1>
-        <form class="form-horizontal" action="/execute" method="POST" data-action="notpjax" onsubmit="return check()">
+        <form class="form-horizontal" action="/execute" method="POST" data-action="notpjax">
         <div class="form-group form-group-sm">
             <label class="col-xs-2 control-label">
               module:
@@ -178,7 +178,7 @@
         $('#module_help').html(help_str);*/
     }
     function show_help(result){
-      
+
       temp_json_obj=jQuery.parseJSON(result);
         //module_help=temp_json_obj[''];
         help_str='Author:'+temp_json_obj['AUTHOR']+'</br>'+'Demands:'+temp_json_obj['DEMANDS']+'</br>'+'Result_Description:'+temp_json_obj['RESULT_DESC']+'</br>'+'Description:'+temp_json_obj['DESCRIPTION']+'</br>';
@@ -186,9 +186,9 @@
         //$('#module_help_name').text(module_name);
         $('#module_help').html(help_str);
     }
-    function check(){
+    /*function check(){
     
-    re=/[{]+["]+[param1]+["]+[:]+["]+\w+["]+[,]+["]+[param2]+["]+[:]+["]+\w+["]+[}]+$/;
+    r=/[{]+["]+[param1]+["]+[:]+["]+\w+["]+[,]+["]+[param2]+["]+[:]+["]+\w+["]+[}]+$/;
     param=$("#param").val();
     var module=$("option:selected").val();
     
@@ -206,7 +206,7 @@
         alert("config error!");
         return false;
     }
- }
+ }*/
   </script>
 
 </html>
