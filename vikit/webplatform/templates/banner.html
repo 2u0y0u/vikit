@@ -24,15 +24,21 @@
 
       </style>
       <div class="navbar navbar-default navbar-static-top" role="navigation">
-      <button  id="start" style="display: none;">start</button>
         <div class="container-fluid">
           <ul class="nav navbar-nav navbar-right">
+            <li>
+            <a href="javascript:void(0)" id="start"  onclick="start()">
+            
+            <span class="fre_log star">start</span>
+            
+              </a>
+            </li>
             <li>
               <a href="javascript:void(0)" onclick="user_alert()">
                 {% if username %}
             {{username}}
             {% else %}
-            <span class="fre_log">username</span>
+            <span class="fre_log user">username</span>
             {% endif %}
               </a>
             </li>
@@ -55,16 +61,56 @@
       </div>
       <script type="text/javascript">
 $(document).ready(function(){
-      $("#start").click();
+        if($.cookie('pstate')==null){
+            $.cookie('pstate','offline');
+        }
+
+        //use to handle refresh
+        if($.cookie('pstate')=='online'){
+            start();
+        }
+     });
+function start(){
+  var state=$(".star").text();
+  
+  if(state=='start'){
       $.ajax(
             {
                 url: "{{ url_for('start') }}",
                 async:false,
                 success: function (result) {
                     if(result == 'success'){
-                        //alert('start success');
+                      if($.cookie('pstate')=='offline'){
+                        alert('start success');
+                        $.cookie('pstate','online');
+                      }
+                        
+                        $(".star").text('stop');
                         
                         //alert('start success');
+                    }
+                },
+                error:function (e) {
+                    alert('ajax start request failed');
+                    alert(e);
+                }
+
+            }
+        )
+  }
+  else{
+    
+    $.ajax(
+            {
+                url: "{{ url_for('shutdown') }}",
+                async:false,
+                success: function (result) {
+
+                    if(result == 'closed'){
+                        alert('stop success');
+                        $(".star").text('start');
+                        $.cookie('pstate','offline');
+                        
                     }
                 },
                 error:function (e) {
@@ -74,7 +120,8 @@ $(document).ready(function(){
 
             }
         )
-    });
+  }
+}
 function user_alert(){
     //$(".user_alert").show();
     if($(".user_alert").is(":hidden")){
@@ -102,10 +149,10 @@ $(document).ready(function(){
         if($.cookie('username')==null){
             $.cookie('username','username');
         }
-        var usr=$(".fre_log").text();
+        var usr=$(".user").text();
         
         if(usr=='username'){
-            $(".fre_log").text($.cookie('username'));
+            $(".user").text($.cookie('username'));
         }
 
         
