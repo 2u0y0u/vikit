@@ -72,6 +72,17 @@ def add_default_service():
     proxy.add_default_service(module_name, port)
     return 'add success'
 
+@client_app.route('/default-services-list')
+def get_default_services_list():
+    # 以:为分界符，左边为服务名，右边为端口
+    services_list=[]
+    import os
+    CUR_DIR = os.path.abspath(os.path.dirname(__file__))
+    SERVICE_FILE = CUR_DIR+"/default_services.conf"
+    with open(SERVICE_FILE) as sf:
+        for line in sf.readlines():
+            services_list.append(line.strip())
+    return json.dumps(services_list)
 
 
 @client_app.route('/available-service-nodes')
