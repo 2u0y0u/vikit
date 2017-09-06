@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html class=" ">
   {% include 'header.html' %}
-
+  <script src="{{ url_for('static', filename='js/tableCheckbox.js') }}"></script>
+  <script src="{{ url_for('static', filename='bootstrap-table.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-table.min.css') }}">
   <body class="">
     {% include 'left.html' %}
     <main>
@@ -12,53 +14,148 @@
             平台管理 / 添加默认服务
           </strong>
         </h1>
-        <form class="form-horizontal" action="/" method="POST" data-action="notpjax" >
-          <!-- <div class="form-group form-group-sm">
-            <label class="col-xs-2 control-label">
-              Target:
-            </label>
-            <div class="col-xs-8 form-inline">
-              <input type="text" name="target" class="input form-control" placeholder="target" style="width:300px" />
-              
-            </div>
-            </div> -->
-            
+  <form class="form-horizontal" action="/" method="POST" data-action="notpjax" >
           
-          <div class="form-group form-group-sm">
-            <label class="col-xs-2 control-label">
-              module:
-            </label>
-            <div class="col-xs-8 form-inline">
-              <input type="text" name="module_name" class="input form-control" placeholder="module_name" style="width:300px" />
-              
-            </div>
-            </div>
-          <div class="form-group form-group-sm">
-            <label class="col-xs-2 control-label">
-              port:
-            </label>
-            <div class="col-xs-8 form-inline">
-              <input type="text" name="port" class="input form-control" placeholder="port" style="width:300px" />
-              
-            </div>
-            </div>
-          
+  <table class="table" id="myTable">
+    <thead>
+      <th style="width:20px;" data-field="checkbox"><input type="checkbox"></th>
+      <th data-field="module">module</th>
+      <th data-field="port">port</th>
+      <th data-field="state">state</th>
+    </thead>
+    <tbody id="modules">
+      
+    </tbody>
+  </table>
+  
           <div class="form-group form-group-sm">
             <div class="col-xs-offset-2 col-xs-8">
-                <input type="button" onclick="add_default_service()" name="submit" value="Submit" class="bsubmit button button-raised button-primary button-pill" style="margin-left: 170px;" />
+                <input type="button" onclick="submit_select()" name="submit" value="Submit" class="bsubmit button button-raised button-primary button-pill" style="margin-left: 770px; margin-top: 15px;" />
                 
               
             </div>
           </div>
         </form>
+        
+      <div class="form-horizontal" id="add_result" style="margin-top: 15px; display: none;overflow-y:scroll;max-height: 150px;">
+      
+      </div>
       </div>
     </main>
 
   </body>
   <script>
-   function add_default_service() {
-        var module_name=$("input[name='module_name']").val();
-        var port=$("input[name='port']").val();
+  //$("#myTable").tableCheck("info");
+var i;
+var services=new Array();
+var services_num;
+var $table = $('#myTable');
+
+            $table.bootstrapTable({
+                toolbar: ".toolbar",
+
+                
+                pagination: true,
+                striped: true,
+                sortable: true,
+                
+                pageSize: 7,
+                pageList: [7,15],
+                
+                
+            });
+  $(document).ready(function(){
+    $table.bootstrapTable('removeAll');
+    get_added_service_list();
+    setTimeout(get_default_services_list(),100);
+
+});
+
+  function get_added_service_list(){
+    $.ajax(
+            {
+                url: "{{ url_for('get_added_services_list') }}",
+                success: function (result) {
+                    var added_service=jQuery.parseJSON(result);
+                    services_num=added_service.length;
+                    for(i=0;i<services_num;i++){
+                      services[i]=added_service[i];
+                      
+                    }
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+  }
+  function get_default_services_list(){
+    $.ajax(
+            {
+                url: "{{ url_for('get_default_services_list') }}",
+                success: function (result) {
+                    show_modules_list(result);
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+  }
+  function show_modules_list(result){
+    var module = jQuery.parseJSON(result);
+    var num=module.length;
+    var j=0;
+    var k=0;
+    var state=false;
+    var module_name;
+    var module_port;
+    var spli;
+    var tab_module;
+    for(j=0;j<num;j++){
+      state=false;
+      spli=module[j].split(":");
+      module_name=spli[0];
+      module_port=spli[1];
+      for(k=0;k<services_num;k++){
+        index=$table.bootstrapTable('getData').length;
+        if(module_name==services[k]){
+          state=true;
+        }
+      }
+      if(state){
+        $table.bootstrapTable("insertRow",{
+            index:index,
+            row:{
+                checkbox:'<input data1="'+module_name+'" data2="'+module_port+'" type="checkbox" disabled="disabled" >',
+                module:module_name,
+                port:module_port,
+                state:'已添加'  
+            }
+        });
+      }
+      else{
+        
+        $table.bootstrapTable("insertRow",{
+            index:0,
+            row:{
+                checkbox:'<input data1="'+module_name+'" data2="'+module_port+'" type="checkbox" >',
+                module:module_name,
+                port:module_port,
+                state:'未添加'  
+            }
+        });
+      }
+      
+    }
+    $("#myTable").tableCheck("info");
+
+  }
+   function add_default_service(module_name,port) {
+        /*var module_name=$("input[name='module_name']").val();
+        var port=$("input[name='port']").val();*/
         $.ajax(
             {
                 url: "/add-default-service"+"?module_name="+module_name+"&port="+port,
@@ -66,9 +163,15 @@
                     //add li to ul
                     
                     //alert(result);
-                    $("input[name='module_name']").val('');
+                    /*$("input[name='module_name']").val('');
                     $("input[name='port']").val('');
-                    alert(result);
+                    alert(result);*/
+                    
+                    if(result=="add success"){
+                      $("#add_result").css("display","block");
+                      var add_result='<p>已成功添加 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  module:'+module_name+'&nbsp;&nbsp;&nbsp;&nbsp;   port:'+port+'</p>';
+                      $("#add_result").append(add_result);
+                    }
                 },
                 error:function () {
                     alert('ajax get_mods request error');
@@ -77,6 +180,20 @@
             }
         )
     } 
+    function submit_select(){
+      $("#modules tr td").find("input[type='checkbox']:checked").each(function(){
+        
+          var module_name=$(this).attr("data1");
+          var module_port=$(this).attr("data2");
+          add_default_service(module_name,module_port);
+          $(this).attr("disabled","disabled");
+          $(this).parent("td").parent("tr").attr("title","already added");
+          $(this).parent("td").parent("tr").removeClass("info");
+          $(this).parent("td").parent("tr").addClass("warning");
+          $(this).prop("checked",false);
+      });
+    }
+
   </script>
 
 </html>

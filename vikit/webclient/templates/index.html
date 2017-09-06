@@ -43,8 +43,12 @@
             <label class="col-xs-2 control-label">
               Target:
             </label>
-            <div class="col-xs-8 form-inline">
-              <input type="text" name="target" class="input form-control" placeholder="target" style="width:300px" spellcheck="false"/>
+            <div class="col-xs-8 ">
+              <!-- <input type="text" name="target" class="input form-control" placeholder="target" style="width:300px" spellcheck="false"/> -->
+              <textarea name="target" placeholder="输入对象地址后回车可输入多个地址" rows="6" class=" form-control target_address" style="resize: none"  spellcheck="false" ></textarea>
+              <span class="form-control-static">
+                输入对象地址后回车可输入多个地址
+              </span>
               
             </div>
             </div>
@@ -82,7 +86,6 @@
           <div class="form-group form-group-sm">
             <div class="col-xs-offset-2 col-xs-8">
                 <input type="submit" onclick="" name="submit" value="Submit" class="btn btn-sm"/>
-                
               
             </div>
           </div>
@@ -101,7 +104,7 @@
                 success: function (result) {
                     if(result == 'success'){
                         //alert('start success');
-                        setTimeout("ajax_get_mods()", 1000);
+                        setTimeout("ajax_get_mods()", 100);
                         //alert('start success');
                     }
                 },
@@ -115,7 +118,7 @@
     else{
       $(".start_state").click(function(){
         
-        setTimeout("ajax_get_mods()", 1000);
+        setTimeout("ajax_get_mods()", 100);
            
        
       });
@@ -206,6 +209,13 @@
         alert("config error!");
         return false;
     }
+ }*/
+ /*function getdata(){
+  var data=$(".target_address").val();
+  var datasp=data.split("\n");
+
+  alert(data);
+  alert(datasp);
  }*/
   </script>
 

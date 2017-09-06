@@ -41,7 +41,7 @@ csrf.init_app(app=client_app)
 import flask
 
 proxy = None
-
+added_service_list=[]
 
 @client_app.route('/start')
 def start():
@@ -69,8 +69,14 @@ def add_default_service():
     module_name = request.args.get('module_name')
     port = int(request.args.get('port'))
     global proxy
+    added_service_list.append(module_name)
     proxy.add_default_service(module_name, port)
     return 'add success'
+
+@client_app.route('/added-services-list')
+def get_added_services_list():
+    
+    return json.dumps(added_service_list)
 
 @client_app.route('/default-services-list')
 def get_default_services_list():
