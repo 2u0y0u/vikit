@@ -102,6 +102,7 @@ def on_select_module(module_name):
     module_help = json.dumps(_ret)
     return render_template('main.html', module_help=module_help, selected_module=module_name)
 
+result = {}
 
 @client_app.route('/execute', methods=['post'])
 def execute():
@@ -121,36 +122,19 @@ def execute():
                                           'config': config
                                           },
                             offline=offline)
-
-    #return '<p>waif for few seconds until the result back.</p><br><a href="result/'+str(task_id)+'">'+'check result here'+'</a>' 
-    return redirect('result/'+task_id)
+    #往结果字典加入(task_id:'processing')
+    global result
+    result[task_id]='processing'
+    #返回结果页面
+    return redirect('results')
     
-
-result = None
-
 
 def on_result_feedback(result_dict):
     task_id = result_dict.get('task_id')
     task_result = result_dict.get('result')
     global result
-    result = {'task_id': task_id, 'task_result': task_result}
-    # return json.dumps({'task_id': task_id, 'task_result': task_result})
-
-
-@client_app.route('/result/<task_id>', methods=['get'])
-def show_result(task_id):
-    if result != None and result.get('task_id') == task_id:
-        #return '<p>task_id:' + result.get('task_id') + '</p><br>' + '<p>task_result:' + str(
-        #    result.get('task_result')) + '</p>'
-        return render_template('result.html', result=result, task_id=task_id)
-    else:
-        return render_template('result.html')
-
-@client_app.route('/crawler', methods=['GET'])
-def crawler():
-    """"""
-    return render_template('crawler.html')
-
+    #改变对应的task状态
+    result[task_id]='finished'
 
 @client_app.route('/results', methods=['GET'])
 def all_result():
@@ -158,34 +142,24 @@ def all_result():
     result='this is result'
     return render_template('results.html',result=result)
 
-@client_app.route('/reqlist', methods=['GET'])
-def reqlist():
-    """"""
-    return render_template('reqlist.html')
+@client_app.route('/result/<task_id>', methods=['get'])
+def show_result(task_id):
+    #点击查看结果时显示
+    if result != None and result.get('task_id') == task_id:
+        return render_template('result.html', result=result, task_id=task_id)
+    else:
+        return render_template('result.html',result='task is not finish',task_id=task_id)
 
-@client_app.route('/monitor', methods=['GET'])
-def monitor():
-    """"""
-    result='this is result'
-    return render_template('result.html',result=result)
+@client_app.route('/task_status/<task_id>', methods=['get'])
+def get_status(task_id):
+    if result and result.has_key(task_id):
+        return result[task_id]# processing finished
+    else:
+        return 'wrong task_id'
 
 
-@client_app.route('/poc_list', methods=['GET'])
-def poc_list():
+@client_app.route('/crawler', methods=['GET'])
+def crawler():
     """"""
-    return render_template('poc_list.html')
-
-@client_app.route('/login', methods=['POST','GET'])
-def login():
-    """"""
-    error=None
-    if request.method=='POST':
-        if request.form['username']=='admin':
-            if request.form['password']=='admin':
-                return render_template('main.html',username=request.form['username'])
-            else:
-                error = 'username or password error'
-        else:
-            error = 'username or password error'
-    return render_template('login.html',error=error)
+    return render_template('crawler.html')
 
