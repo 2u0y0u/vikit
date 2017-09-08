@@ -9,6 +9,7 @@
 import json
 
 from .app import client_app
+from .app import celery
 
 from ..api.trigger import get_client_proxy
 from ..api.trigger import get_platform_proxy
@@ -19,16 +20,19 @@ from flask import g
 proxy = None
 proxy2 = None
 
+
 @client_app.route('/start')
 def start():
     """"""
     global proxy
 
-    if proxy==None:
+    if proxy == None:
         proxy = get_client_proxy('127.0.0.1', 7000)
         proxy.regist_result_callback(on_result_feedback)
     return 'success' if proxy != None else 'fail'
-#-----------------------------------------
+
+
+# -----------------------------------------
 @client_app.route('/admin/start')
 def start2():
     """"""
@@ -39,6 +43,7 @@ def start2():
         # proxy.regist_result_callback(on_result_feedback)
     return 'success' if proxy != None else 'fail'
 
+
 @client_app.route('/add-default-service')
 def add_default_service():
     module_name = request.args.get('module_name')
@@ -46,6 +51,8 @@ def add_default_service():
     global proxy2
     proxy2.add_default_service(module_name, port)
     return 'add success'
+
+
 @client_app.route('/available-service-nodes')
 def get_available_service_nodes():
     """"""
@@ -59,15 +66,16 @@ def get_available_service_nodes_info():
     return json.dumps(proxy2.get_service_nodes_info())
 
 
-#---------------------------------------------
+# ---------------------------------------------
 @client_app.route('/shutdown')
 def shutdown():
     """"""
     global proxy
 
     proxy.shutdown()
-    #return '<h1>Success</h1>'
-    return "closed" 
+    # return '<h1>Success</h1>'
+    return "closed"
+
 
 @client_app.route('/available-modules')
 def get_available_module():
@@ -102,7 +110,9 @@ def on_select_module(module_name):
     module_help = json.dumps(_ret)
     return render_template('main.html', module_help=module_help, selected_module=module_name)
 
+
 result = {}
+
 
 @client_app.route('/execute', methods=['post'])
 def execute():
@@ -122,44 +132,95 @@ def execute():
                                           'config': config
                                           },
                             offline=offline)
-    #往结果字典加入(task_id:'processing')
+    # 往结果字典加入(task_id:'processing')
     global result
-    result[task_id]='processing'
-    #返回结果页面
+    result[task_id] = 'processing'
+    # 返回结果页面
     return redirect('results')
-    
+
 
 def on_result_feedback(result_dict):
     task_id = result_dict.get('task_id')
     task_result = result_dict.get('result')
     global result
-    #改变对应的task状态
-    result[task_id]='finished'
+    # 改变对应的task状态
+    result[task_id] = 'finished'
+
 
 @client_app.route('/results', methods=['GET'])
 def all_result():
     """"""
-    result='this is result'
-    return render_template('results.html',result=result)
+    result = 'this is result'
+    return render_template('results.html', result=result)
+
 
 @client_app.route('/result/<task_id>', methods=['get'])
 def show_result(task_id):
-    #点击查看结果时显示
+    # 点击查看结果时显示
     if result != None and result.get('task_id') == task_id:
         return render_template('result.html', result=result, task_id=task_id)
     else:
-        return render_template('result.html',result='task is not finish',task_id=task_id)
+        return render_template('result.html', result='task is not finish', task_id=task_id)
+
 
 @client_app.route('/task_status/<task_id>', methods=['get'])
 def get_status(task_id):
     if result and result.has_key(task_id):
-        return result[task_id]# processing finished
+        return result[task_id]  # processing finished
     else:
         return 'wrong task_id'
 
 
-@client_app.route('/crawler', methods=['GET'])
+from vikit.mod_tools.ConaPenTSuite.search_url.search_url import conasearch
+
+
+@celery.task(bind=True)
+def get_targets(self, engine='baidu', key='python', start_page=1, end_page=3, page_size=10):
+    result = []
+    for i in range(start_page, end_page + 1):
+        self.update_state(state='PROGRESS',
+                          meta={'current': i, 'total': end_page - start_page + 1, 'status': 'processing'})
+        result.extend(conasearch(engine=engine, key=key, page_num=i, page_size=page_size, savefile=0))
+    return {'current': end_page, 'total': end_page - start_page + 1, 'status': 'completed', 'result': result}
+
+
+@client_app.route('/get_targets', methods=['POST'])
 def crawler():
     """"""
-    return render_template('crawler.html')
+    engine = request.form['engine'].strip()
+    key = request.form['key'].strip()
+    start_page = int(request.form['start_page'].strip())
+    end_page = int(request.form['end_page'].strip())
+    page_size = int(request.form['page_size'].strip())
+    task = get_targets.apply_async(engine, key, start_page, end_page, page_size)
+    return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
 
+
+@client_app.route('/status/<task_id>')
+def taskstatus(task_id):
+    task = get_targets.AsyncResult(task_id)
+    if task.state == 'PENDING':
+        response = {
+            'state': task.state,
+            'current': 0,
+            'total': 100,
+            'status': 'Pending...'
+        }
+    elif task.state != 'FAILURE':
+        response = {
+            'state': task.state,
+            'current': task.info.get('current', 0),
+            'total': task.info.get('total', 100),
+            'status': task.info.get('status', '')
+        }
+        if 'result' in task.info:
+            response['result'] = task.info['result']
+    else:
+        # some thing went wrong in the background job
+        response = {
+            'state': task.state,
+            'current': task.info.get('current', 0),
+            'total': task.info.get('total', 100),
+            'status': str(task.info)
+        }
+    return jsonify(response)
