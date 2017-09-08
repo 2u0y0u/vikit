@@ -16,7 +16,17 @@
 </head>
 <style type="text/css">
 body{
-	background-image: url({{url_for('static', filename='images/login_bg.jpg')}});
+	margin: 0;
+    padding: 0;
+
+	width: 100vw;
+	height: 100vh;
+	background-size:cover;
+	
+	background: url({{url_for('static', filename='images/login_bg.jpg')}}) no-repeat center center fixed;
+	
+	background-attachment:fixed;
+	
 }
 html,body{
 	 font-family: "微软雅黑",'Roboto', sans-serif;
@@ -28,18 +38,18 @@ html,body{
 	width: 50%;
 	height: 10%;
 	position: absolute;
-	top:140px;
-	left: -100px;
+	top:20%;
+	left: -2%;
 	text-align: center;
 	font-size: 50px;
 }
 .login{
 	background-color: #fff;
 	position: absolute;
-	right: 40px;
-	top:120px;
-	width: 30%;
-	height: 60%;
+	right: 5%;
+	top:20%;
+	width: 410px;
+	height: 403px;
 	//opacity: 0.7;
 	padding: 10px;
 	background-color: rgba(255, 255, 255, 0.5);
@@ -110,7 +120,7 @@ $(document).ready(function(){
         }
         });
 $(document).ready(function(){
-	$(".logo").animate({left:"190px"});
+	$(".logo").animate({left:"15%"});
 
 	//alert(width);
 	//alert(height);

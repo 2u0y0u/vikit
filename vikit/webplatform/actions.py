@@ -69,8 +69,8 @@ def add_default_service():
     module_name = request.args.get('module_name')
     port = int(request.args.get('port'))
     global proxy
-    added_service_list.append(module_name)
     proxy.add_default_service(module_name, port)
+    added_service_list.append(module_name)
     return 'add success'
 
 @client_app.route('/added-services-list')

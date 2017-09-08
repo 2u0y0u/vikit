@@ -29,8 +29,8 @@
   </table>
   
           <div class="form-group form-group-sm">
-            <div class="col-xs-offset-2 col-xs-8">
-                <input type="button" onclick="submit_select()" name="submit" value="Submit" class="bsubmit button button-raised button-primary button-pill" style="margin-left: 770px; margin-top: 15px;" />
+            <div class="col-xs-offset-2 col-xs-8" style="width: 100%;max-width: 100%;margin-left:0">
+                <input type="button" onclick="submit_select()" name="submit" value="Submit" class="bsubmit button button-raised button-primary button-pill" style="margin-left: 85%; margin-top: 15px;" />
                 
               
             </div>
@@ -68,7 +68,7 @@ var $table = $('#myTable');
     $table.bootstrapTable('removeAll');
     get_added_service_list();
     setTimeout(get_default_services_list(),100);
-
+    $("#myTable").tableCheck("info");
 });
 
   function get_added_service_list(){
@@ -132,7 +132,7 @@ var $table = $('#myTable');
                 checkbox:'<input data1="'+module_name+'" data2="'+module_port+'" type="checkbox" disabled="disabled" >',
                 module:module_name,
                 port:module_port,
-                state:'已添加'  
+                state:'<font style="color:red">已添加</font>'  
             }
         });
       }
@@ -144,7 +144,7 @@ var $table = $('#myTable');
                 checkbox:'<input data1="'+module_name+'" data2="'+module_port+'" type="checkbox" >',
                 module:module_name,
                 port:module_port,
-                state:'未添加'  
+                state:'<font style="color:green">未添加</font>'  
             }
         });
       }
@@ -181,18 +181,37 @@ var $table = $('#myTable');
         )
     } 
     function submit_select(){
+      if($.cookie('pstate')=='online'){
       $("#modules tr td").find("input[type='checkbox']:checked").each(function(){
         
           var module_name=$(this).attr("data1");
           var module_port=$(this).attr("data2");
           add_default_service(module_name,module_port);
-          $(this).attr("disabled","disabled");
-          $(this).parent("td").parent("tr").attr("title","already added");
-          $(this).parent("td").parent("tr").removeClass("info");
-          $(this).parent("td").parent("tr").addClass("warning");
+          
           $(this).prop("checked",false);
+          var index=$(this).parent("td").parent("tr").data('index');
+          $table.bootstrapTable("updateRow",{
+            index:index,
+            row:{
+                checkbox:'<input data1="'+module_name+'" data2="'+module_port+'" type="checkbox" disabled="disabled" >',
+                state:'<font style="color:red">已添加</font>'  
+            }
+          });
+          $("#myTable").tableCheck("info");
       });
+        }
+      else{
+        alert("请先start!!!");
+      }
     }
+    $(document).on('click', '.pagination', function(){
+        $("#myTable").tableCheck("info");
+    });
+    $(document).on('click', '#modules tr td', function(){
+        var _tr = $(this).parents('tr');
+      _tr.find(":checkbox").trigger("click");
+    });
+  
 
   </script>
 
