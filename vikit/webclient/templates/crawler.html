@@ -12,7 +12,7 @@
             漏洞检测 / 爬虫扫描
           </strong>
         </h1>
-        <form class="form-horizontal" action="/" method="POST" data-action="notpjax" >
+        <form class="form-horizontal" action="/get_targets" method="POST" data-action="notpjax" >
           <!-- <div class="form-group form-group-sm">
             <label class="col-xs-2 control-label">
               Target:
@@ -27,7 +27,7 @@
               Way:
             </label>
             <div class="col-xs-8 form-inline">
-              <select name="module" class="form-control" id="way">
+              <select name="engine" class="form-control" id="way">
                 <option value="google"  selected="slected">
                   google
                 </option>
@@ -42,8 +42,7 @@
               Keywords:
             </label>
             <div class="col-xs-8">
-          <!-- <textarea id="domain" name="domain" class="form-control" rows="6" placeholder="target" ></textarea> -->
-          <textarea name="keywords" placeholder="keywords" rows="6" class=" form-control" style="resize: none"  spellcheck="false" spellcheck="false" ></textarea>
+          <textarea name="key" placeholder="keywords" rows="6" class=" form-control" style="resize: none"  spellcheck="false" spellcheck="false" ></textarea>
             </div>
           </div>
           <div class="form-group form-group-sm">
@@ -51,7 +50,7 @@
               StartPage:
             </label>
             <div class="col-xs-8 form-inline">
-              <input type="text" name="StartPage" class="input form-control" placeholder="StartPage" style="width:300px" spellcheck="false"/>
+              <input type="text" name="start_page" class="input form-control" placeholder="StartPage" style="width:300px" spellcheck="false"/>
               
             </div>
             </div>
@@ -60,30 +59,20 @@
               EndPage:
             </label>
             <div class="col-xs-8 form-inline">
-              <input type="text" name="EndPage" class="input form-control" placeholder="EndPage" style="width:300px" spellcheck="false"/>
+              <input type="text" name="end_page" class="input form-control" placeholder="EndPage" style="width:300px" spellcheck="false"/>
               
             </div>
             </div>
           <div class="form-group form-group-sm">
             <label class="col-xs-2 control-label">
-              Contain:
+              PageSize:
             </label>
             <div class="col-xs-8 form-inline">
-              <input type="text" name="contain" class="input form-control" placeholder="contain" style="width:300px" spellcheck="false"/>
+              <input type="text" name="page_size" class="input form-control" placeholder="page size" style="width:300px" spellcheck="false"/>
               
             </div>
             </div>
-          <div class="form-group form-group-sm form-expert">
-            <label class="col-xs-2 control-label">
-              Help:
-            </label>
-            <div class="col-xs-8">
-              <div class="checkbox">
-              <p id="module_help_name"></p>
-                <div id="module_help"></div>
-              </div>
-            </div>
-          </div>
+          
           <div class="form-group form-group-sm">
             <div class="col-xs-offset-2 col-xs-8">
                 <input type="submit" onclick="" name="submit" value="Submit" class="btn btn-sm"/>
