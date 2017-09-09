@@ -44,6 +44,13 @@ tbody>tr>td{
     margin-left: 5px;
     height: 100%;
     width: 95%;
+}
+.back{
+    color: #0099CC;
+}
+.back:hover{
+    color:#0cad67;
+}
 </style>
 </head>
 <body class="">
@@ -52,78 +59,30 @@ tbody>tr>td{
 <main>
     {% include 'banner.html' %}
     <div class="container-fluid">
-        <h1 class="bread-crumb"> <strong>扫描中的任务</strong></h1>
+        <h1 class="bread-crumb"> <strong><a href="/results" class="back">扫描结果</a>/任务查询</strong></h1>
         <table class="table" style="border: none">
             <thead>
-            <!-- <tr>
-                <th>task_id</th>
-                <td>result</td>
-                <th>payload</th>
-                <th>config</th>
-                <th>result</th>
-            </tr>
-            <tr>
-                <th>task_id</th>
-                <td>result</td>
-                <th>payload</th>
-                <th>config</th>
-                <th>result</th>
-            </tr> -->
-            
             </thead>
             <tbody id="resulist">
              <tr >
                 <th class="res_th " style="border: none;padding-bottom: 5px;"><h4 style="border-left: 2px solid #AAAAAA;">task_id:</h4></th>
-                
-                <!-- <th>payload</th>
-                <th>config</th>
-                <th>result</th> -->
             </tr>
             <tr id="task_id">
-                
+                <td  style="border-left: none;border-right: none; ">{{task_id}}</td>
             </tr>
             <tr >
                 <th class="res_th" style="border: none;padding-bottom: 5px;"><h4 style="border-left: 2px solid #AAAAAA;">result:</h4></th>
             </tr>
             <tr id="result">
-                
+                <td style="border-left: none;border-right: none; ">{{result}}</td>
             </tr>
-            {% if result %} 
-            <script type="text/javascript">
-            var t='{{result}}';
-            if(t=='this is result'){
-                var t1='<td style="border-left: none;border-right: none; ">test</td>';
-                var t2='<td style="border-left: none;border-right: none; ">test</td>';
-                $("#task_id").append(t1);
-                $("#result").append(t2);
-            }
-            else{
-                var t1='<td style="border-left: none;border-right: none; ">{{task_id}}</td>';
-                var t2='<td style="border-left: none;border-right: none; ">{{result}}</td>';
-                $("#task_id").append(t1);
-                $("#result").append(t2);
-            }
-            </script>
             </tbody>
             
                     
-                    {% else %}
-                    
-                    <!-- refresh after 5 seconds -->
-                    <script>
-                    window.onload = function(){
-                        setTimeout("location.reload()",5000);
-                    }
-                    $(".table").empty();
-                    var load='<ul id="spinners" style="margin-top:-100px;"><li class="active" data-id="4"><div id="preloader_4"><span></span><span></span><span></span><span></span><span></span></div></li></ul>';
-                    $(".table").append(load);
-                    </script>
-                    
-                
-            <div class="load_text">task hasn't finished,please wait for 5 seconds</div>
-            {% endif %}
+                   
             
         </table>
+        
     </div>
 </main>
 </body>
