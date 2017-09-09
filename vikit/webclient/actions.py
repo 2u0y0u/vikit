@@ -150,8 +150,10 @@ def on_result_feedback(result_dict):
 @client_app.route('/results', methods=['GET'])
 def all_result():
     """"""
-    result = 'this is result'
-    return render_template('results.html', result=result)
+    global result
+    all_result=json.dumps(result)
+
+    return render_template('results.html',result=all_result)     
 
 
 @client_app.route('/result/<task_id>', methods=['get'])
@@ -171,8 +173,12 @@ def get_status(task_id):
         return 'wrong task_id'
 
 
-from vikit.mod_tools.ConaPenTSuite.search_url.search_url import conasearch
+#from vikit.mod_tools.ConaPenTSuite.search_url.search_url import conasearch
 
+@client_app.route('/crawler', methods=['GET'])
+def crawler2():
+    """"""
+    return render_template('crawler.html')
 
 @celery.task(bind=True)
 def get_targets(self, engine='baidu', key='python', start_page=1, end_page=3, page_size=10):
@@ -192,6 +198,11 @@ def crawler():
     start_page = int(request.form['start_page'].strip())
     end_page = int(request.form['end_page'].strip())
     page_size = int(request.form['page_size'].strip())
+    print engine
+    print key
+    print start_page
+    print end_page
+    print page_size
     task = get_targets.apply_async(engine, key, start_page, end_page, page_size)
     return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
 
