@@ -134,7 +134,8 @@ def execute():
                             offline=offline)
     # 往结果字典加入(task_id:'processing')
     global result
-    result[task_id] = 'processing'
+    status_and_result=('processing',None)
+    result[task_id] = status_and_result
     # 返回结果页面
     return redirect('results')
 
@@ -144,7 +145,8 @@ def on_result_feedback(result_dict):
     task_result = result_dict.get('result')
     global result
     # 改变对应的task状态
-    result[task_id] = 'finished'
+    status_and_result=('finished',task_result)
+    result[task_id] = status_and_result
 
 
 @client_app.route('/results', methods=['GET'])
@@ -159,7 +161,7 @@ def all_result():
 @client_app.route('/result/<task_id>', methods=['get'])
 def show_result(task_id):
     # 点击查看结果时显示
-    if result != None and result.get('task_id') == task_id:
+    if result != None and result.get(task_id)[0] == 'finished':
         return render_template('result.html', result=result, task_id=task_id)
     else:
         return render_template('result.html', result='task is not finish', task_id=task_id)
@@ -168,12 +170,12 @@ def show_result(task_id):
 @client_app.route('/task_status/<task_id>', methods=['get'])
 def get_status(task_id):
     if result and result.has_key(task_id):
-        return result[task_id]  # processing finished
+        return result[task_id][0]  # processing finished
     else:
         return 'wrong task_id'
 
 
-#from vikit.mod_tools.ConaPenTSuite.search_url.search_url import conasearch
+from vikit.mod_tools.ConaPenTSuite.search_url.search_url import conasearch
 
 @client_app.route('/crawler', methods=['GET'])
 def crawler2():
