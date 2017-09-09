@@ -185,6 +185,7 @@ def crawler2():
 @celery.task(bind=True)
 def get_targets(self, engine='baidu', key='python', start_page=1, end_page=3, page_size=10):
     result = []
+    print engine,key,start_page,end_page,page_size
     for i in range(start_page, end_page + 1):
         self.update_state(state='PROGRESS',
                           meta={'current': i, 'total': end_page - start_page + 1, 'status': 'processing'})
@@ -200,13 +201,10 @@ def crawler():
     start_page = int(request.form['start_page'].strip())
     end_page = int(request.form['end_page'].strip())
     page_size = int(request.form['page_size'].strip())
-    print engine
-    print key
-    print start_page
-    print end_page
-    print page_size
-    task = get_targets.apply_async(engine, key, start_page, end_page, page_size)
-    return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
+    #return jsonify(get_targets2(engine,key,start_page,end_page,page_size))
+    task = get_targets.apply_async(args=[engine, key, start_page, end_page, page_size])
+    #return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
+    return jsonify({'task_id':task.id})
 
 
 @client_app.route('/status/<task_id>')
