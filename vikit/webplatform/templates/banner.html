@@ -27,11 +27,9 @@
         <div class="container-fluid">
           <ul class="nav navbar-nav navbar-right">
             <li>
-            <a href="javascript:void(0)" id="start"  onclick="start()">
-            
-            <span class="fre_log star">start</span>
-            
-              </a>
+            <div class="switch " data-on="danger" data-off="success" style="margin-top: 15px;margin-right: 20px;">
+                <input type="checkbox" name="my-checkbox" id="start" checked>
+              </div>
             </li>
             <li>
               <a href="javascript:void(0)" onclick="user_alert()">
@@ -67,13 +65,41 @@ $(document).ready(function(){
 
         //use to handle refresh
         if($.cookie('pstate')=='online'){
-            start();
+            $("[name='my-checkbox']").click();
         }
      });
+$("[name='my-checkbox']").bootstrapSwitch({
+        onText:"start",  
+        offText:"stop",  
+        onColor:"success",  
+        offColor:"warning",  
+        size:"small",  
+        onSwitchChange:function(event,state){  
+            if(state==true){  
+                $.ajax(
+            {
+                url: "{{ url_for('shutdown') }}",
+                async:false,
+                success: function (result) {
+
+                    if(result == 'closed'){
+                        alert('stop success');
+                        $.cookie('state','offline');
+                    }
+                },
+                error:function (e) {
+                    alert('ajax start request failed');
+                    
+                }
+
+            }
+        )
+            }else{  
+                start();
+            }  
+        }
+});
 function start(){
-  var state=$(".star").text();
-  
-  if(state=='start'){
       $.ajax(
             {
                 url: "{{ url_for('start') }}",
@@ -98,30 +124,6 @@ function start(){
             }
         )
   }
-  else{
-    
-    $.ajax(
-            {
-                url: "{{ url_for('shutdown') }}",
-                async:false,
-                success: function (result) {
-
-                    if(result == 'closed'){
-                        alert('stop success');
-                        $(".star").text('start');
-                        $.cookie('pstate','offline');
-                        
-                    }
-                },
-                error:function (e) {
-                    alert('ajax start request failed');
-                    
-                }
-
-            }
-        )
-  }
-}
 function user_alert(){
     //$(".user_alert").show();
     if($(".user_alert").is(":hidden")){

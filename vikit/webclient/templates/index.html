@@ -99,18 +99,13 @@
       if($.cookie('state')=='online'){
         setTimeout("ajax_get_mods()", 1000);           
     }
-    else{
-      $(".start_state").click(function(){
-        
-        setTimeout("ajax_get_mods()", 1000);
-           
-       
-      });
-    }
     var target='{{target}}';
     if(target){
       $("#target").val(target);
     }
+    $("[name='my-checkbox']").click(function(){
+          alert(2);
+          });
   });
 
     function ajax_get_mods() {

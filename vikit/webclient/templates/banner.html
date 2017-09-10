@@ -3,11 +3,14 @@
         <div class="container-fluid">
           <ul class="nav navbar-nav navbar-right">
             <li>
-            <a href="javascript:void(0)" id="start" class="start_state" onclick="start()">
+            <!-- <a href="javascript:void(0)" id="start" class="start_state" onclick="start()">
             
             <span class="fre_log">start</span>
             
-              </a>
+              </a> -->
+              <div class="switch " data-on="danger" data-off="success" style="margin-top: 15px;margin-right: 20px;">
+                <input type="checkbox" name="my-checkbox" id="start" checked>
+              </div>
             </li>
             
             <li>
@@ -18,48 +21,15 @@
         
       </div>
 <script type="text/javascript">
-$(document).ready(function(){
-        if($.cookie('state')==null){
-            $.cookie('state','offline');
-        }
-
-        //use to handle refresh
-        if($.cookie('state')=='online'){
-          start();
-            
-        }
-     });
-function start(){
-  var state=$(".fre_log").text();
-  
-  if(state=='start'){
-      $.ajax(
-            {
-                url: "{{ url_for('start') }}",
-                async:false,
-                success: function (result) {
-                    if(result == 'success'){
-                      if($.cookie('state')=='offline'){
-                        alert('start success');
-                        $.cookie('state','online');
-                      }
-                        
-                        $(".fre_log").text('stop');
-                        $("#start").removeClass("start_state");
-                        //alert('start success');
-                    }
-                },
-                error:function (e) {
-                    alert('ajax start request failed');
-                    alert(e);
-                }
-
-            }
-        )
-  }
-  else{
-    
-    $.ajax(
+$("[name='my-checkbox']").bootstrapSwitch({
+        onText:"start",  
+        offText:"stop",  
+        onColor:"success",  
+        offColor:"warning",  
+        size:"small",  
+        onSwitchChange:function(event,state){  
+            if(state==true){  
+                $.ajax(
             {
                 url: "{{ url_for('shutdown') }}",
                 async:false,
@@ -67,9 +37,7 @@ function start(){
 
                     if(result == 'closed'){
                         alert('stop success');
-                        $(".fre_log").text('start');
                         $.cookie('state','offline');
-                        $("#start").addClass("start_state");
                     }
                 },
                 error:function (e) {
@@ -79,8 +47,44 @@ function start(){
 
             }
         )
+            }else{  
+                start();
+            }  
+        }
+});
+$(document).ready(function(){
+        if($.cookie('state')==null){
+            $.cookie('state','offline');
+        }
+
+        //use to handle refresh
+        if($.cookie('state')=='online'){
+          $("[name='my-checkbox']").click();
+            
+        }
+     });
+function start(){
+      $.ajax(
+            {
+                url: "{{ url_for('start') }}",
+                async:false,
+                success: function (result) {
+                    if(result == 'success'){
+                      if($.cookie('state')=='offline'){
+                        alert('start success');
+                        $.cookie('state','online');
+                        setTimeout("ajax_get_mods()", 1000);  
+                      }
+                    }
+                },
+                error:function (e) {
+                    alert('ajax start request failed');
+                }
+
+            }
+        )
   }
-}
+
 
 function platform(){
   var protocol= window.location.protocol;
