@@ -54,7 +54,7 @@ var claw_task_id=new Array();
                 async:false,
                 success: function (result) {
                     var crawler_result=result;
-                    var percent=parseInt(crawler_result['current']/crawler_result['total']*100);
+                    var percent=parseInt((crawler_result['current']-1)/crawler_result['total']*100);
                     if(crawler_result['status']=='completed'){
                         var tr='<tr><th>'+claw_task_id[j]+'</th><th>'+claw_result_dic[claw_task_id[j]][0]+'</th><th style="width:25%;border-left: 1px solid #eee;border-right: 1px solid #eee;color:green">已完成</th><th><a data="'+claw_task_id[j]+'" href="result_check/'+claw_task_id[j]+'" style="color:green">查看</a></th></tr>';
                         $("#resulist").append(tr);
@@ -63,7 +63,12 @@ var claw_task_id=new Array();
                         var tr='<tr><th>'+claw_task_id[j]+'</th><th>'+claw_result_dic[claw_task_id[j]][0]+'</th><th style="width:25%;border-left: 1px solid #eee;border-right: 1px solid #eee;"><section id="color"></section><span>'+percent+'%</span></th><th><a data="'+claw_task_id[j]+'" style="color:red">查看</a></th></tr>';
                         $("#resulist").prepend(tr);
                         var colorbar = new Nanobar({target: document.getElementById('color')});
-                        colorbar.go(percent);
+                        if(percent==0){
+                            colorbar.go(1);
+                        }
+                        else{
+                            colorbar.go(percent);
+                        }
                     }
                     
                     
