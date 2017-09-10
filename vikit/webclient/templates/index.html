@@ -45,7 +45,7 @@
             </label>
             <div class="col-xs-8 ">
               <!-- <input type="text" name="target" class="input form-control" placeholder="target" style="width:300px" spellcheck="false"/> -->
-              <textarea name="target" placeholder="输入对象地址后回车可输入多个地址" rows="6" class=" form-control target_address" style="resize: none"  spellcheck="false" ></textarea>
+              <textarea name="target" placeholder="输入对象地址后回车可输入多个地址" rows="6" id="target" class=" form-control target_address" style="resize: none"  spellcheck="false" ></textarea>
               <span class="form-control-static">
                 输入对象地址后回车可输入多个地址
               </span>
@@ -97,31 +97,19 @@
   <script>
     $(document).ready(function(){
       if($.cookie('state')=='online'){
-      $.ajax(
-            {
-                url: "{{ url_for('start') }}",
-                async:false,
-                success: function (result) {
-                    if(result == 'success'){
-                        //alert('start success');
-                        setTimeout("ajax_get_mods()", 100);
-                        //alert('start success');
-                    }
-                },
-                error:function () {
-                    alert('ajax start request failed');
-                }
-
-            }
-        )
+        setTimeout("ajax_get_mods()", 1000);           
     }
     else{
       $(".start_state").click(function(){
         
-        setTimeout("ajax_get_mods()", 100);
+        setTimeout("ajax_get_mods()", 1000);
            
        
       });
+    }
+    var target='{{target}}';
+    if(target){
+      $("#target").val(target);
     }
   });
 

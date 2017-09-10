@@ -25,7 +25,8 @@ $(document).ready(function(){
 
         //use to handle refresh
         if($.cookie('state')=='online'){
-            start();
+          start();
+            
         }
      });
 function start(){
@@ -80,6 +81,7 @@ function start(){
         )
   }
 }
+
 function platform(){
   var protocol= window.location.protocol;
   var hostname=window.location.hostname;

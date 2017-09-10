@@ -177,6 +177,8 @@ def get_status(task_id):
 
 from vikit.mod_tools.ConaPenTSuite.search_url.search_url import conasearch
 
+crawler_task={}
+
 @client_app.route('/crawler', methods=['GET'])
 def crawler2():
     """"""
@@ -204,8 +206,18 @@ def crawler():
     #return jsonify(get_targets2(engine,key,start_page,end_page,page_size))
     task = get_targets.apply_async(args=[engine, key, start_page, end_page, page_size])
     #return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
-    return jsonify({'task_id':task.id})
+    num=(end_page-start_page+1)*page_size
+    crawler_task[task.id]=(key,num)
+    #return jsonify({'task_id':task.id})
+    return redirect('crawler_results')
 
+@client_app.route('/crawler_results', methods=['GET'])
+def crawler_results():
+    """"""
+    global crawler_task
+    all_result=json.dumps(crawler_task)
+
+    return render_template('crawler_results.html',result=all_result)     
 
 @client_app.route('/status/<task_id>')
 def taskstatus(task_id):
@@ -235,3 +247,40 @@ def taskstatus(task_id):
             'status': str(task.info)
         }
     return jsonify(response)
+    #return render_template('crawler_result_check.html',result=jsonify(response))
+
+@client_app.route('/result_check/<task_id>')
+def result_check(task_id):
+    task = get_targets.AsyncResult(task_id)
+    if task.state == 'PENDING':
+        response = {
+            'state': task.state,
+            'current': 0,
+            'total': 100,
+            'status': 'Pending...'
+        }
+    elif task.state != 'FAILURE':
+        response = {
+            'state': task.state,
+            'current': task.info.get('current', 0),
+            'total': task.info.get('total', 100),
+            'status': task.info.get('status', '')
+        }
+        if 'result' in task.info:
+            response['result'] = task.info['result']
+    else:
+        # some thing went wrong in the background job
+        response = {
+            'state': task.state,
+            'current': task.info.get('current', 0),
+            'total': task.info.get('total', 100),
+            'status': str(task.info)
+        }
+    crawler_result_check=json.dumps(response)
+    return render_template('crawler_result_check.html',result=crawler_result_check)
+
+
+@client_app.route('/action', methods=['get'])
+def scan():
+    url= request.args.get('url')
+    return render_template('index.html',target=url)

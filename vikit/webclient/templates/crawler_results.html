@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html class=" ">
+{% include 'header.html' %}
+<link rel="stylesheet" href="{{ url_for('static', filename='normalize.css') }}">
+<script type=text/javascript src="{{ url_for('static', filename='nanobar.js') }}"></script>
+<head> </head>
+<body class="">
+  {% include 'left.html' %}
+<main>
+    {% include 'banner.html' %}
+    <div class="container-fluid">
+        <h1 class="bread-crumb"> <strong>爬虫结果</strong>
+            <div class="absolute-right">
+                <form action="" method="post" class="input-group search-group" data-format="HTML" data-action="notpjax">
+                    
+                </form>
+            </div> </h1>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>task_id</th>
+                <th>KeyWord</th>
+                <th>state</th>
+                <th>action</th>
+            </tr>
+            
+            </thead>
+            <tbody id="resulist">
+            
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+var claw_task_id=new Array();
+   function show_result(){
+    var str='{{result|safe}}';
+    var claw_result_dic=jQuery.parseJSON(str);
+    var i=0;
+    for (var key in claw_result_dic){
+        claw_task_id[i]=key;
+        /*alert(claw_task_id[i]);
+        alert(claw_result_dic[claw_task_id[i]]);
+        alert(claw_result_dic[claw_task_id[i]][0]);*/
+        i++;
+    }
+    var num=claw_task_id.length;
+    $("#resulist").empty();
+    for(var j=0;j<num;j++){
+        $.ajax(
+            {
+                url: "/status/"+claw_task_id[j],
+                async:false,
+                success: function (result) {
+                    var crawler_result=result;
+                    var percent=parseInt(crawler_result['current']/crawler_result['total']*100);
+                    if(crawler_result['status']=='completed'){
+                        var tr='<tr><th>'+claw_task_id[j]+'</th><th>'+claw_result_dic[claw_task_id[j]][0]+'</th><th style="width:25%;border-left: 1px solid #eee;border-right: 1px solid #eee;color:green">已完成</th><th><a data="'+claw_task_id[j]+'" href="result_check/'+claw_task_id[j]+'" style="color:green">查看</a></th></tr>';
+                        $("#resulist").append(tr);
+                    }
+                    else{
+                        var tr='<tr><th>'+claw_task_id[j]+'</th><th>'+claw_result_dic[claw_task_id[j]][0]+'</th><th style="width:25%;border-left: 1px solid #eee;border-right: 1px solid #eee;"><section id="color"></section><span>'+percent+'%</span></th><th><a data="'+claw_task_id[j]+'" style="color:red">查看</a></th></tr>';
+                        $("#resulist").prepend(tr);
+                        var colorbar = new Nanobar({target: document.getElementById('color')});
+                        colorbar.go(percent);
+                    }
+                    
+                    
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+   }
+   $(document).ready(function(){
+    show_result();
+    setInterval("show_result()",1000);
+   });
+</script>
+<script>
+    
+
+</script>
+</body>
+</html>

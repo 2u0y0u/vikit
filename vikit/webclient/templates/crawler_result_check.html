@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html class=" ">
+{% include 'header.html' %}
+<script src="{{ url_for('static', filename='bootstrap-table.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-table.min.css') }}">
+  <style type="text/css">
+    .back{
+    color: #0099CC;
+}
+.back:hover{
+    color:#0cad67;
+}
+  </style>
+<head> </head>
+<body class="">
+  {% include 'left.html' %}
+<main>
+    {% include 'banner.html' %}
+    <div class="container-fluid">
+        <h1 class="bread-crumb"> <strong><a href="/crawler_results" class="back">扫描结果</a>/爬虫结果</strong>
+            <div class="absolute-right">
+                <form action="" method="post" class="input-group search-group" data-format="HTML" data-action="notpjax">
+                    
+                </form>
+            </div> </h1>
+
+        <table class="table" id="myTable">
+    <thead>
+      <th data-field="result">result</th>
+      <th data-field="action" style="width: 10%">action</th>
+    </thead>
+    <tbody id="modules">
+      
+    </tbody>
+  </table>
+    </div>
+</main>
+
+<script>
+var i;
+var result_num;
+var result={{result|safe}};
+var flag=0;
+var $table = $('#myTable');
+
+            $table.bootstrapTable({
+                toolbar: ".toolbar",
+
+                
+                pagination: true,
+                striped: true,
+                sortable: true,
+                
+                pageSize: 15,
+                pageList: [15,30],   
+});
+index=$table.bootstrapTable('getData').length;
+result_num=result['result'].length;
+for(key in result['result'][0]){
+    flag=1;
+}
+for(i=0;i<result_num;i++){
+    if(flag==0){
+    $table.bootstrapTable("insertRow",{
+            index:index,
+            row:{
+                result:result['result'][i],
+                action:'<a href="/action/'+result['result'][i]+'">扫描</a>'
+            }
+        });
+    }
+    else{
+        $table.bootstrapTable("insertRow",{
+            index:index,
+            row:{
+                result:result['result'][i]['url'],
+                action:'<a href="/action?url='+result['result'][i]['url']+'">扫描</a>'
+            }
+        });
+    }
+}
+</script>
+<script>
+    
+
+</script>
+</body>
+</html>
