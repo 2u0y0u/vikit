@@ -15,7 +15,7 @@
                     
                 </form>
             </div> </h1>
-        <table class="table table-hover">
+        <table class="table table-hover" id="resulttable">
             <thead>
             <tr>
                 <th>task_id</th>
@@ -35,10 +35,14 @@
 <script>
 var interval2;
 var claw_task_id=new Array();
+var claw_task_id_pro=new Array();
+var colorbar=new Array();
+var claw_result_dic;
    function show_result(){
     var str='{{result|safe}}';
-    var claw_result_dic=jQuery.parseJSON(str);
+    claw_result_dic=jQuery.parseJSON(str);
     var i=0;
+    var k=0;
     for (var key in claw_result_dic){
         claw_task_id[i]=key;
         /*alert(claw_task_id[i]);
@@ -61,15 +65,19 @@ var claw_task_id=new Array();
                         $("#resulist").append(tr);
                     }
                     else{
-                        var tr='<tr><th>'+claw_task_id[j]+'</th><th>'+claw_result_dic[claw_task_id[j]][0]+'</th><th style="width:25%;border-left: 1px solid #eee;border-right: 1px solid #eee;"><section id="color"></section><span>'+percent+'%</span></th><th><a data="'+claw_task_id[j]+'" style="color:red">查看</a></th></tr>';
+                        var tr='<tr class="pro'+k+'"><th>'+claw_task_id[j]+'</th><th>'+claw_result_dic[claw_task_id[j]][0]+'</th><th style="width:25%;border-left: 1px solid #eee;border-right: 1px solid #eee;"><section id="color'+k+'"></section><span id="percent'+k+'">'+percent+'%</span></th><th><a data="'+claw_task_id[j]+'" style="color:red">查看</a></th></tr>';
                         $("#resulist").prepend(tr);
-                        var colorbar = new Nanobar({target: document.getElementById('color')});
+                        colorbar[k] = new Nanobar({target: document.getElementById('color'+k)});
                         if(percent==0){
-                            colorbar.go(1);
+                            colorbar[k].go(1);
                         }
                         else{
-                            colorbar.go(percent);
+                            colorbar[k].go(percent);
                         }
+                        claw_task_id_pro[k]=claw_task_id[j];
+                        k++;
+                        
+
                     }
                     
                     
@@ -82,9 +90,52 @@ var claw_task_id=new Array();
         )
     }
    }
+   function show_proresult(){
+    var x=0;
+    var pronum=claw_task_id_pro.length;
+    for(x=0;x<pronum;x++){
+        if(claw_task_id_pro!=0){
+        $.ajax(
+            {
+                url: "/status/"+claw_task_id_pro[x],
+                async:false,
+                success: function (result) {
+                    var crawler_result=result;
+                    var percent=parseInt((crawler_result['current']-1)/crawler_result['total']*100);
+                    if(crawler_result['status']=='completed'){
+                        $("#resulttable").find(".pro"+x).remove();
+                        var tr='<tr><th>'+claw_task_id_pro[x]+'</th><th>'+claw_result_dic[claw_task_id_pro[x]][0]+'</th><th style="width:25%;border-left: 1px solid #eee;border-right: 1px solid #eee;color:green">已完成</th><th><a data="'+claw_task_id_pro[x]+'" href="result_check/'+claw_task_id_pro[x]+'" style="color:green">查看</a></th></tr>';
+                        $("#resulist").append(tr);
+                        claw_task_id_pro[x]=0;
+                    }
+                    else{
+                        if(percent==0){
+                            colorbar[x].go(1);
+
+                        }
+                        else{
+                            colorbar[x].go(percent);
+                            $("#percent"+x).text(percent+"%");
+                        }
+                        
+
+                    }
+                    
+                    
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+    }
+    }
+   }
    $(document).ready(function(){
     show_result();
-    interval2=setInterval("show_result()",1000);
+    interval2=setInterval("show_proresult()",1000);
+    //interval2=setInterval("show_result()",1000);
    });
 </script>
 <script>
