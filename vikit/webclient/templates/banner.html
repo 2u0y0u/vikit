@@ -38,6 +38,8 @@ $("[name='my-checkbox']").bootstrapSwitch({
                     if(result == 'closed'){
                         alert('stop success');
                         $.cookie('state','offline');
+                        window.clearInterval(interval1);
+                        window.clearInterval(interval2);
                     }
                 },
                 error:function (e) {

@@ -33,6 +33,7 @@
 </main>
 
 <script>
+var interval2;
 var claw_task_id=new Array();
    function show_result(){
     var str='{{result|safe}}';
@@ -83,7 +84,7 @@ var claw_task_id=new Array();
    }
    $(document).ready(function(){
     show_result();
-    setInterval("show_result()",1000);
+    interval2=setInterval("show_result()",1000);
    });
 </script>
 <script>

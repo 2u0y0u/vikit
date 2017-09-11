@@ -57,7 +57,10 @@ var $table = $('#myTable');
 index=$table.bootstrapTable('getData').length;
 result_num=result['result'].length;
 for(key in result['result'][0]){
-    flag=1;
+    if(key=='url'){
+        flag=1;
+    }
+    
 }
 for(i=0;i<result_num;i++){
     if(flag==0){
@@ -65,7 +68,7 @@ for(i=0;i<result_num;i++){
             index:index,
             row:{
                 result:result['result'][i],
-                action:'<a href="/action/'+result['result'][i]+'">扫描</a>'
+                action:'<a href="/action?url='+result['result'][i]+'">扫描</a>'
             }
         });
     }
