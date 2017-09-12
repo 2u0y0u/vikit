@@ -1,6 +1,25 @@
+<style type="text/css">
+.navbar-left{
+  float: left;
+}
+.navbar-left>li{
+  display: block;
+  margin-top: 17px;
+  font-size: 16px;
+  margin-left:50px;
+}
+.switch{
+  margin-top: 15px;
+  margin-right: 20px;
+}
+</style>
 <div class="navbar navbar-default navbar-static-top" role="navigation">
       <button  id="start" style="display: none;">start</button>
         <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-left">
+        <li id="time">aaa
+        </li>
+        </ul>
           <ul class="nav navbar-nav navbar-right">
             <li>
             <!-- <a href="javascript:void(0)" id="start" class="start_state" onclick="start()">
@@ -8,7 +27,7 @@
             <span class="fre_log">start</span>
             
               </a> -->
-              <div class="switch " data-on="danger" data-off="success" style="margin-top: 15px;margin-right: 20px;">
+              <div class="switch " data-on="danger" data-off="success">
                 <input type="checkbox" name="my-checkbox" id="start" checked>
               </div>
             </li>
@@ -25,7 +44,7 @@ $("[name='my-checkbox']").bootstrapSwitch({
         onText:"start",  
         offText:"stop",  
         onColor:"success",  
-        offColor:"warning",  
+        offColor:"danger",  
         size:"small",  
         onSwitchChange:function(event,state){  
             if(state==true){  
@@ -38,8 +57,18 @@ $("[name='my-checkbox']").bootstrapSwitch({
                     if(result == 'closed'){
                         alert('stop success');
                         $.cookie('state','offline');
-                        window.clearInterval(interval1);
-                        window.clearInterval(interval2);
+                        try{
+                          window.clearInterval(interval1);
+                        }
+                        catch(e){
+                          
+                        }
+                        try{
+                          window.clearInterval(interval2);
+                        }
+                        catch(e){
+                         
+                        }
                     }
                 },
                 error:function (e) {
@@ -64,6 +93,7 @@ $(document).ready(function(){
           $("[name='my-checkbox']").click();
             
         }
+        showLeftTime();
      });
 function start(){
       $.ajax(
@@ -75,7 +105,12 @@ function start(){
                       if($.cookie('state')=='offline'){
                         alert('start success');
                         $.cookie('state','online');
-                        setTimeout("ajax_get_mods()", 1000);  
+                        try{
+                          setTimeout("ajax_get_mods()", 1000);
+                        }
+                        catch(e){
+                          
+                        }
                       }
                     }
                 },
@@ -86,7 +121,19 @@ function start(){
             }
         )
   }
-
+var initializationTime=(new Date()).getTime();
+function showLeftTime()
+{
+  var now=new Date();
+  var year=now.getFullYear();
+  var month=now.getMonth()+1;
+  var day=now.getDate();
+  var hours=now.getHours();
+  var minutes=now.getMinutes();
+  var seconds=now.getSeconds();
+  $("#time").text(""+year+"年"+month+"月"+day+"日 "+hours+":"+minutes+":"+seconds+"");
+  var timeID=setTimeout(showLeftTime,1000);
+}
 
 function platform(){
   var protocol= window.location.protocol;

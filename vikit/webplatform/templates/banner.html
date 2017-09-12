@@ -21,10 +21,27 @@
 .user_alert a:hover{
     background-color: #eee;
 }
+.navbar-left{
+  float: left;
+}
+.navbar-left>li{
+  display: block;
+  margin-top: 17px;
+  font-size: 16px;
+  margin-left:50px;
+}
+.switch{
+  margin-top: 15px;
+  margin-right: 20px;
+}
 
       </style>
       <div class="navbar navbar-default navbar-static-top" role="navigation">
         <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-left">
+        <li id="time">aaa
+        </li>
+        </ul>
           <ul class="nav navbar-nav navbar-right">
             <li>
             <div class="switch " data-on="danger" data-off="success" style="margin-top: 15px;margin-right: 20px;">
@@ -72,7 +89,7 @@ $("[name='my-checkbox']").bootstrapSwitch({
         onText:"start",  
         offText:"stop",  
         onColor:"success",  
-        offColor:"warning",  
+        offColor:"danger",  
         size:"small",  
         onSwitchChange:function(event,state){  
             if(state==true){  
@@ -156,7 +173,7 @@ $(document).ready(function(){
         if(usr=='username'){
             $(".user").text($.cookie('username'));
         }
-
+        showLeftTime();
         
      });
 function loginout(){
@@ -181,6 +198,19 @@ function loginout(){
     $.cookie('login_state','off');
 
     window.location.href="/login";
+}
+var initializationTime=(new Date()).getTime();
+function showLeftTime()
+{
+  var now=new Date();
+  var year=now.getFullYear();
+  var month=now.getMonth()+1;
+  var day=now.getDate();
+  var hours=now.getHours();
+  var minutes=now.getMinutes();
+  var seconds=now.getSeconds();
+  $("#time").text(""+year+"年"+month+"月"+day+"日 "+hours+":"+minutes+":"+seconds+"");
+  var timeID=setTimeout(showLeftTime,1000);
 }
 function client(){
   var protocol= window.location.protocol;

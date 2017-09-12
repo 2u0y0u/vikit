@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class=" ">
 {% include 'header.html' %}
-<script src="{{ url_for('static', filename='bootstrap-table.js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap-table.min.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-table.min.css') }}">
   <style type="text/css">
     .back{
@@ -52,7 +52,7 @@ var $table = $('#myTable');
                 sortable: true,
                 
                 pageSize: 15,
-                pageList: [5,15,30,"All"],   
+                pageList: [15,30],   
 });
 index=$table.bootstrapTable('getData').length;
 result_num=result['result'].length;
@@ -82,6 +82,7 @@ for(i=0;i<result_num;i++){
         });
     }
 }
+
 </script>
 <script>
     
