@@ -46,7 +46,7 @@ $("[name='my-checkbox']").bootstrapSwitch({
         onColor:"success",  
         offColor:"danger",  
         size:"small",  
-        onSwitchChange:function(event,state){  
+        onSwitchChange:function(event,state){ 
             if(state==true){  
                 $.ajax(
             {
@@ -90,7 +90,11 @@ $(document).ready(function(){
 
         //use to handle refresh
         if($.cookie('state')=='online'){
-          $("[name='my-checkbox']").click();
+          var switch_state=$("[name='my-checkbox']").bootstrapSwitch('state');
+          if(switch_state){
+            $("[name='my-checkbox']").click();
+          }
+          
             
         }
         showLeftTime();
