@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html class=" ">
 {% include 'header.html' %}
+<script src="{{ url_for('static', filename='js/tableCheckbox.js') }}"></script>
 <script src="{{ url_for('static', filename='bootstrap-table.min.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-table.min.css') }}">
   <style type="text/css">
@@ -10,6 +11,16 @@
 .back:hover{
     color:#0cad67;
 }
+#subbut{
+    margin-left: -1%;
+    margin-bottom:10px;
+    margin-right:40px;
+  }
+  .but_div{
+    width: 100%;
+    max-width: 100%;
+    
+  }
   </style>
 <head> </head>
 <body class="">
@@ -23,11 +34,20 @@
                     
                 </form>
             </div> </h1>
-
+    <div class="form-group form-group-sm">
+            <div class="col-xs-offset-2 col-xs-8 but_div" style="margin-left: 0">
+                <input type="button" onclick="scan_select()" name="submit" id="subbut" value="扫描选中项" class="button button-primary button-rounded " />
+                <span id="result_num"></span>
+              
+            </div>
+          </div>       
         <table class="table" id="myTable">
     <thead>
+        <tr>
+      <th data-field="checkbox"><input type="checkbox"></th>
       <th data-field="result">result</th>
       <th data-field="action" style="width: 10%">action</th>
+      </tr>
     </thead>
     <tbody id="modules">
       
@@ -52,7 +72,7 @@ var $table = $('#myTable');
                 sortable: true,
                 
                 pageSize: 15,
-                pageList: [15,30],   
+                pageList: [15,30,"All"],   
 });
 index=$table.bootstrapTable('getData').length;
 result_num=result['result'].length;
@@ -67,6 +87,7 @@ for(i=0;i<result_num;i++){
     $table.bootstrapTable("insertRow",{
             index:index,
             row:{
+                checkbox:'<input data="'+result['result'][i]+'" type="checkbox" >',
                 result:result['result'][i],
                 action:'<a href="/action?url='+result['result'][i]+'">扫描</a>'
             }
@@ -76,6 +97,7 @@ for(i=0;i<result_num;i++){
         $table.bootstrapTable("insertRow",{
             index:index,
             row:{
+                checkbox:'<input data="'+result['result'][i]['url']+' type="checkbox">',
                 result:result['result'][i]['url'],
                 action:'<a href="/action?url='+result['result'][i]['url']+'">扫描</a>'
             }
@@ -83,10 +105,30 @@ for(i=0;i<result_num;i++){
     }
 }
 
+$("#myTable").tableCheck("info");
+$(document).on('click','.pagination', function(){
+    alert(1);
+        $("#myTable").tableCheck("info");
+    });
+    $(document).on('click','#modules tr td', function(){
+        var _tr = $(this).parents('tr');
+      _tr.find(":checkbox").trigger("click");
+    });
+/*$(document).click(function(e){
+    alert(e.target.className);
+})*/
+var targets='';
+$("#result_num").text('共'+result_num+'条数据');
+function scan_select(){
+    $("#modules tr td").find("input[type='checkbox']:checked").each(function(){
+        
+          var target=$(this).attr("data");
+          targets=targets+target+'\\n';
+          
+      });
+    window.location.href="/action?url="+targets+"";
+}
 </script>
-<script>
-    
 
-</script>
 </body>
 </html>

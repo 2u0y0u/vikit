@@ -4,6 +4,24 @@
   <script src="{{ url_for('static', filename='js/tableCheckbox.js') }}"></script>
   <script src="{{ url_for('static', filename='bootstrap-table.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-table.min.css') }}">
+  <style type="text/css">
+  #subbut{
+    margin-left: 1%;
+    margin-bottom:-10px;
+    margin-right:40px;
+  }
+  .but_div{
+    width: 100%;
+    max-width: 100%;
+    
+  }
+  #add_result{
+    margin-top: 15px; 
+    display: none;
+    overflow-y:scroll;
+    max-height: 150px;
+  }
+  </style>>
   <body class="">
     {% include 'left.html' %}
     <main>
@@ -15,7 +33,13 @@
           </strong>
         </h1>
   <form class="form-horizontal" action="/" method="POST" data-action="notpjax" >
-          
+    <div class="form-group form-group-sm">
+            <div class="col-xs-offset-2 col-xs-8 but_div" style="margin-left: 0">
+                <input type="button" onclick="submit_select()" name="submit" id="subbut" value="Submit" class="button button-primary button-rounded " />
+                <span id="services_num"></span>
+              
+            </div>
+          </div>       
   <table class="table" id="myTable">
     <thead>
       <th style="width:20px;" data-field="checkbox"><input type="checkbox"></th>
@@ -28,16 +52,16 @@
     </tbody>
   </table>
   
-          <div class="form-group form-group-sm">
+          <!-- <div class="form-group form-group-sm">
             <div class="col-xs-offset-2 col-xs-8" style="width: 100%;max-width: 100%;margin-left:0">
                 <input type="button" onclick="submit_select()" name="submit" value="Submit" class="bsubmit button button-raised button-primary button-pill" style="margin-left: 85%; margin-top: 15px;" />
                 
               
             </div>
-          </div>
+          </div> -->
         </form>
         
-      <div class="form-horizontal" id="add_result" style="margin-top: 15px; display: none;overflow-y:scroll;max-height: 150px;">
+      <div class="form-horizontal" id="add_result" >
       
       </div>
       </div>
@@ -49,6 +73,7 @@
 var i;
 var services=new Array();
 var services_num;
+var all_services_num=0;
 var $table = $('#myTable');
 
             $table.bootstrapTable({
@@ -60,7 +85,7 @@ var $table = $('#myTable');
                 sortable: true,
                 
                 pageSize: 7,
-                pageList: [7,15],
+                pageList: [7,15,"All"],
                 
                 
             });
@@ -69,12 +94,17 @@ var $table = $('#myTable');
     get_added_service_list();
     setTimeout(get_default_services_list(),100);
     $("#myTable").tableCheck("info");
+    sernum();
 });
+function sernum(){
+  $("#services_num").text('已添加module数量 '+services_num+' /总共module数量 '+all_services_num);
 
+}
   function get_added_service_list(){
     $.ajax(
             {
                 url: "{{ url_for('get_added_services_list') }}",
+                async:false,
                 success: function (result) {
                     var added_service=jQuery.parseJSON(result);
                     services_num=added_service.length;
@@ -94,6 +124,7 @@ var $table = $('#myTable');
     $.ajax(
             {
                 url: "{{ url_for('get_default_services_list') }}",
+                async:false,
                 success: function (result) {
                     show_modules_list(result);
                 },
@@ -107,6 +138,7 @@ var $table = $('#myTable');
   function show_modules_list(result){
     var module = jQuery.parseJSON(result);
     var num=module.length;
+    all_services_num=num;
     var j=0;
     var k=0;
     var state=false;
@@ -171,6 +203,8 @@ var $table = $('#myTable');
                       $("#add_result").css("display","block");
                       var add_result='<p>已成功添加 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  module:'+module_name+'&nbsp;&nbsp;&nbsp;&nbsp;   port:'+port+'</p>';
                       $("#add_result").append(add_result);
+                      services_num++;
+                      sernum();
                     }
                 },
                 error:function () {
