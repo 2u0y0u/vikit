@@ -583,18 +583,22 @@ $__System.registerDynamic("a", [], false, function(__require, __exports, __modul
         var v = $(this).find('option:selected').attr('data');
         var k=$(this).find('option:selected').text();
         $("#module_help_name").text(k);
-        module_help(k);
-       
+        if(k!='SelectModule'){
+          module_help(k);
+        }
         if (v == 0) {
           $('div.form-expert').hide();
         } else if (v == 1) {
           $('div.form-expert').show();
+          $("#scan-mode option[data='0']").remove();
         }
         else if (v == 2) {
           $('div.form-expert').show();
+          $("#scan-mode option[data='0']").remove();
         }
         else{
           $('div.form-expert').show();
+          $("#scan-mode option[data='0']").remove();
         }
       });
       $('#start-time').on('change', function() {

@@ -110,6 +110,7 @@ function start(){
                         alert('start success');
                         $.cookie('state','online');
                         try{
+                          $("#scan-mode option[data='0']").text(" Loading.... ");
                           setTimeout("ajax_get_mods()", 1000);
                         }
                         catch(e){

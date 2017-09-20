@@ -51,6 +51,21 @@ tbody>tr>td{
 .back:hover{
     color:#0cad67;
 }
+.res_th{
+    border: none;
+    padding-bottom: 5px;
+}
+#resulist h4{
+    border-left: 2px solid #AAAAAA;
+}
+#task_id td{
+    border-left: none;
+    border-right: none;
+}
+#result td{
+    border-left: none;
+    border-right: none;
+}
 </style>
 </head>
 <body class="">
@@ -65,16 +80,16 @@ tbody>tr>td{
             </thead>
             <tbody id="resulist">
              <tr >
-                <th class="res_th " style="border: none;padding-bottom: 5px;"><h4 style="border-left: 2px solid #AAAAAA;">task_id:</h4></th>
+                <th class="res_th "><h4>task_id:</h4></th>
             </tr>
             <tr id="task_id">
-                <td  style="border-left: none;border-right: none; ">{{task_id}}</td>
+                <td>{{task_id|safe}}</td>
             </tr>
             <tr >
-                <th class="res_th" style="border: none;padding-bottom: 5px;"><h4 style="border-left: 2px solid #AAAAAA;">result:</h4></th>
+                <th class="res_th"><h4>result:</h4></th>
             </tr>
             <tr id="result">
-                <td style="border-left: none;border-right: none; ">{{result}}</td>
+                <td>{{result|safe}}</td>
             </tr>
             </tbody>
             

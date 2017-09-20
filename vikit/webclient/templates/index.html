@@ -18,14 +18,15 @@
               module:
             </label>
             <div class="col-xs-8 form-inline">
-              <select name="module" class="form-control" id="scan-mode">
+              <select name="module" class="form-control" id="scan-mode" >
                 <option value="0" data="0" selected="slected">
                   SelectModule
                 </option>
                 <!-- <option value="1" data="1" >
-                  专家模式
+                  专家模式$("#scan-mode option[data='0']").text();
                 </option> --><!-- line 582 -->
               </select>
+              
             </div>
           </div>
           <div class="form-group form-group-sm form-expert">
@@ -97,6 +98,7 @@
   <script>
     $(document).ready(function(){
       if($.cookie('state')=='online'){
+        $("#scan-mode option[data='0']").text(" Loading.... ");
         setTimeout("ajax_get_mods()", 1000);           
     }
     var target='{{target}}';
@@ -114,7 +116,7 @@
                     //add li to ul
                     
                     show_modules(result);
-                    
+                    $("#scan-mode option[data='0']").text("SelectModule");
                 },
                 error:function () {
                     alert('ajax get_mods request error');
