@@ -2,7 +2,7 @@
 <html class=" ">
 {% include 'header.html' %}
 <script src="{{ url_for('static', filename='js/tableCheckbox.js') }}"></script>
-<script src="{{ url_for('static', filename='bootstrap-table.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap-table.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-table.min.css') }}">
   <style type="text/css">
     .back{
@@ -72,7 +72,8 @@ var $table = $('#myTable');
                 sortable: true,
                 
                 pageSize: 15,
-                pageList: [15,30,"All"],   
+                pageList: [15,30,"All"],
+                 
 });
 index=$table.bootstrapTable('getData').length;
 result_num=result['result'].length;
@@ -107,16 +108,19 @@ for(i=0;i<result_num;i++){
 
 $("#myTable").tableCheck("info");
 $(document).on('click','.pagination', function(){
-    alert(1);
+        $("#myTable").tableCheck("info");
+    });
+$(document).on('click','.dropdown-menu', function(){
         $("#myTable").tableCheck("info");
     });
     $(document).on('click','#modules tr td', function(){
         var _tr = $(this).parents('tr');
-      _tr.find(":checkbox").trigger("click");
+        _tr.find(":checkbox").trigger("click");
     });
-/*$(document).click(function(e){
-    alert(e.target.className);
-})*/
+/*bootstrap-table 2601行开始改动*/
+ $("body").delegate('.pagination', 'click', function () { 
+        alert(1);  
+});
 var targets='';
 $("#result_num").text('共'+result_num+'条数据');
 function scan_select(){

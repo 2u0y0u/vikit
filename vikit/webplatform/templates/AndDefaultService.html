@@ -13,6 +13,7 @@
   .but_div{
     width: 100%;
     max-width: 100%;
+    margin-bottom:-100px; 
     
   }
   #add_result{
@@ -20,6 +21,9 @@
     display: none;
     overflow-y:scroll;
     max-height: 150px;
+  }
+  .sub_div{
+    margin-bottom: -5px;
   }
   </style>
   <body class="">
@@ -32,8 +36,8 @@
             平台管理 / 添加默认服务
           </strong>
         </h1>
-  <form class="form-horizontal" action="/" method="POST" data-action="notpjax" >
-    <div class="form-group form-group-sm">
+  <div class="form-horizontal"  data-action="notpjax" >
+    <div class="form-group form-group-sm sub_div">
             <div class="col-xs-offset-2 col-xs-8 but_div" style="margin-left: 0">
                 <input type="button" onclick="submit_select()" name="submit" id="subbut" value="Submit" class="button button-primary button-rounded " />
                 <span id="services_num"></span>
@@ -59,7 +63,7 @@
               
             </div>
           </div> -->
-        </form>
+        </div>
         
       <div class="form-horizontal" id="add_result" >
       
@@ -83,7 +87,7 @@ var $table = $('#myTable');
                 pagination: true,
                 striped: true,
                 sortable: true,
-                
+                search:true,
                 pageSize: 7,
                 pageList: [7,15,"All"],
                 
