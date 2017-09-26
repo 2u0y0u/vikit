@@ -16,7 +16,7 @@ from flask import render_template, request, jsonify
 from flask import session, redirect, url_for, make_response
 from flask import g
 
-from form import LoginForm
+from form import LoginForm,AddUserForm,DelUserForm,ChangePassForm
 from flask_wtf.csrf import CsrfProtect
 from model import User
 from flask_login import login_user, login_required
@@ -155,6 +155,7 @@ def login():
         user = User(user_name)
         if user.verify_password(password):
             login_user(user)
+            #print current_user.username
             return redirect(url_for('main'))
         else:
             return 'login failed'
@@ -164,6 +165,56 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+@client_app.route('/changepwd',methods=['GET','POST'])
+@login_required
+def changepwd():
+    form = ChangePassForm()
+    if flask.request.method=='GET':
+        return render_template('changepwd.html', form=form)
+
+    if form.validate_on_submit():
+        old_pass = request.form.get('old_pass', None)
+        new_pass = request.form.get('new_pass', None)
+        user = User(current_user.username)
+        #return 'password changed' / 'wrong old password'
+        return user.change_passwd(old_password=old_pass,new_password=new_pass)
+    else:
+        return 'unvalidated form'
+
+@client_app.route('/adduser',methods=['GET','POST'])
+@login_required
+def adduser():
+    form = AddUserForm()
+    if flask.request.method=='GET':
+        return render_template('add_user.html', form=form)
+
+    if form.validate_on_submit():
+        #check the password is equal to comfirm_password first on front
+        user_name = request.form.get('username', None)
+        password = request.form.get('password', None)
+        user = User(current_user.username)
+        # return 'only admin can add user' / 'user existed' /'add successfully'
+        return user.add_user(user_name,password)
+    else:
+        return 'unvalidated form'
+
+@client_app.route('/deluser',methods=['POST','Get'])
+@login_required
+def deluser():
+    form = DelUserForm()
+    if flask.request.method=='GET':
+        return render_template('del_user.html', form=form)
+
+    if form.validate_on_submit():
+        user_name = request.form.get('username', None)
+        user = User(current_user.username)
+        #return 'only admin can del user' / 'del successfully' / 'user is not existed'
+        return user.del_user(user_name)
+    else:
+        return 'unvalidated form'
+
+
 
 
 @client_app.route('/AndDefaultService', methods=['GET'])

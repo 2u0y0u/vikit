@@ -14,3 +14,18 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('remember me', default=False)
 
+class ChangePassForm(FlaskForm):
+    old_pass = StringField('old password', validators=[DataRequired()])
+    new_pass = PasswordField('new password', validators=[DataRequired()])
+    confirm_new_pass = PasswordField('confirm new password', validators=[DataRequired()])
+
+class AddUserForm(FlaskForm):
+    username = StringField('old password', validators=[DataRequired()])
+    password = PasswordField('new password', validators=[DataRequired()])
+    confirm_password = PasswordField('confirm new password', validators=[DataRequired()])
+
+class DelUserForm(FlaskForm):
+    username = StringField('old password', validators=[DataRequired()])
+
+
+
