@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html class=" ">
+  {% include 'header.html' %}
+<style type="text/css">
+.reset{
+  margin-left: 12%;
+}
+.sub_but{
+  margin-left:2%;
+}
+</style>
+  <body class="">
+    {% include 'left.html' %}
+    <main>
+      {% include 'banner.html' %}
+      <div class="container-fluid">
+        <h1 class="bread-crumb">
+          <strong>
+            用户管理 / 修改密码
+          </strong>
+        </h1>
+        <form class="form-horizontal" action="/changepwd" method="POST" data-action="notpjax" >
+          <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label">
+              old:
+            </label>
+            <div class="col-xs-8 form-inline">
+          <input type="password" name="old_pass" class="input form-control" placeholder="Old password" style="width:300px" spellcheck="false"/>
+            </div>
+          </div>
+          <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label">
+              New:
+            </label>
+            <div class="col-xs-8 form-inline">
+              <input type="password" name="new_pass" class="input form-control" placeholder="New password" style="width:300px" spellcheck="false"/>
+              
+            </div>
+            </div>
+          <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label">
+              Confirm:
+            </label>
+            <div class="col-xs-8 form-inline">
+              <input type="password" name="confirm_new_pass" class="input form-control" placeholder="Confirm new password" style="width:300px" spellcheck="false"/>
+              
+            </div>
+            </div>
+          
+          <div class="form-group form-group-sm">
+            <div class="col-xs-offset-2 col-xs-8">
+                <input type="button" onclick="reset()" value="reset" class="reset button button-highlight button-pill button-small"/>
+                <input type="submit" onclick="" name="submit" value="Submit" class="sub_but button button-primary button-pill button-small"/>
+            </div>
+          </div>
+          {{ form.csrf_token }}
+        </form>
+      </div>
+    </main>
+
+  </body>
+  <script>
+    function reset(){
+      $("input[type='password']").val("");
+    }
+  </script>
+
+</html>

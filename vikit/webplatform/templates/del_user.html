@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html class=" ">
+  {% include 'header.html' %}
+<style type="text/css">
+
+</style>
+  <body class="">
+    {% include 'left.html' %}
+    <main>
+      {% include 'banner.html' %}
+      <div class="container-fluid">
+        <h1 class="bread-crumb">
+          <strong>
+            用户管理 / 删除用户
+          </strong>
+        </h1>
+        <form class="form-horizontal" action="/deluser" method="POST" data-action="notpjax" >
+          
+          <div class="form-group form-group-sm">
+            <label class="col-xs-2 control-label">
+              Username:
+            </label>
+            <div class="col-xs-8 form-inline">
+              <input type="text" name="username" class="input form-control" placeholder="module_name" style="width:300px" />
+              <input type="submit" onclick="" name="submit" value="Submit" class="sub_but bsubmit button button-primary button-rounded button-small"/>
+            </div>
+            </div>
+          
+          {{ form.csrf_token }}
+        </form>
+      </div>
+    </main>
+
+  </body>
+  <script>
+  
+  </script>
+
+</html>

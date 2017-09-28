@@ -112,7 +112,8 @@ class User(UserMixin):
             return 'wrong old password'
 
     def add_user(self,username,password):
-        if self.username is not 'admin':
+        if self.username != 'admin':
+            print self.username
             return 'only admin can add user'
         username = username
         password_hash = generate_password_hash(password)
@@ -133,7 +134,7 @@ class User(UserMixin):
 
     def del_user(self,username):
         #only admin can del user
-        if self.username is not 'admin':
+        if self.username != 'admin':
             return 'only admin can del user'
         try:
             with open(PROFILE_FILE,'r+') as f:

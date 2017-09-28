@@ -17,6 +17,7 @@
             <thead>
             <tr>
                 <th>task_id</th>
+                <th>target</th>
                 <th>state</th>
                 <th>action</th>
                 
@@ -32,6 +33,7 @@
 
 <script>
 var task_id=new Array();
+var target;
 var interval1;
    function show_result(){
     var str='{{result|safe}}';
@@ -49,13 +51,15 @@ var interval1;
                 url: "/task_status/"+task_id[j],
                 async:false,
                 success: function (result) {
-                    //add li to ul
-                    if(result=="finished"){
-                    var tr='<tr><th>'+task_id[j]+'</th><th>'+result+'</th><th><a data="'+task_id[j]+'" href="result/'+task_id[j]+'" style="color:green">查看</a></th></tr>';
+                    var task_status=jQuery.parseJSON(result);
+                    if(task_status[0]=="finished"){
+                        //target=result[1][0];
+                    var tr='<tr><th>'+task_id[j]+'</th><th>'+task_status[1][0]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" href="result/'+task_id[j]+'" style="color:green">查看</a></th></tr>';
                     $("#resulist").append(tr);
                     }
                     else{
-                        var tr='<tr><th>'+task_id[j]+'</th><th>'+result+'</th><th><a data="'+task_id[j]+'" style="color:red">未完成</a></th></tr>';
+                        //target=result[1];
+                        var tr='<tr><th>'+task_id[j]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" style="color:red">未完成</a></th></tr>';
                         $("#resulist").prepend(tr);
                     }
                     

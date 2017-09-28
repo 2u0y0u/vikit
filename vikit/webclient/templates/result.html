@@ -100,5 +100,12 @@ tbody>tr>td{
         
     </div>
 </main>
+<script type="text/javascript">
+var result={{result|safe}};
+var task_id='{{task_id|safe}}';
+var result_task=JSON.stringify(result[task_id]);
+$("#result td").empty();
+$("#result td").append(result_task);
+</script>
 </body>
 </html>
