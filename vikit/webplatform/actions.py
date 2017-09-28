@@ -158,6 +158,8 @@ def login():
             #print current_user.username
             return redirect(url_for('main'))
         else:
+            #error = 'username or password wrong!'
+            #return redirect(url_for('login',error='username or password wrong!'))
             return 'login failed'
 
 @client_app.route('/logout')
@@ -199,6 +201,23 @@ def adduser():
     else:
         return 'unvalidated form'
 
+@client_app.route('/showusers',methods=['GET','POST'])
+@login_required
+def showusers():
+    # form = AddUserForm()
+    # if flask.request.method=='GET':
+    #     return render_template('add_user.html', form=form)
+
+    # if form.validate_on_submit():
+    #     #check the password is equal to comfirm_password first on front
+    #     user_name = request.form.get('username', None)
+    #     password = request.form.get('password', None)
+    user = User(current_user.username)
+        # return 'only admin can add user' / 'user existed' /'add successfully'
+    return user.show_user()
+    
+
+
 @client_app.route('/deluser',methods=['POST','Get'])
 @login_required
 def deluser():
@@ -236,4 +255,5 @@ def service():
 def search():
     """"""
     return render_template('search.html')
+
 

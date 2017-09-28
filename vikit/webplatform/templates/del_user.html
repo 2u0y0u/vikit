@@ -2,7 +2,15 @@
 <html class=" ">
   {% include 'header.html' %}
 <style type="text/css">
-
+#del_user{
+    margin-top: 15px; 
+    display: none;
+    overflow-y:scroll;
+    max-height: 150px;
+  }
+  .del_form{
+    display: none;
+  }
 </style>
   <body class="">
     {% include 'left.html' %}
@@ -14,7 +22,7 @@
             用户管理 / 删除用户
           </strong>
         </h1>
-        <form class="form-horizontal" action="/deluser" method="POST" data-action="notpjax" >
+        <form class="form-horizontal del_form" action="/deluser" method="POST" data-action="notpjax" >
           
           <div class="form-group form-group-sm">
             <label class="col-xs-2 control-label">
@@ -22,18 +30,81 @@
             </label>
             <div class="col-xs-8 form-inline">
               <input type="text" name="username" class="input form-control" placeholder="module_name" style="width:300px" />
-              <input type="submit" onclick="" name="submit" value="Submit" class="sub_but bsubmit button button-primary button-rounded button-small"/>
+              <input type="submit" id="submit" onclick="" name="submit" value="Submit" class="sub_but bsubmit button button-primary button-rounded button-small"/>
             </div>
             </div>
           
           {{ form.csrf_token }}
         </form>
+              
+              <div class="form-horizontal"  data-action="notpjax" > 
+          <table class="table" id="myTable">
+    <thead>
+      <th data-field="module">username</th>
+      <th data-field="port">action</th>
+      
+    </thead>
+    <tbody id="modules">
+      
+    </tbody>
+  </table>
+  </div>
+  <div class="form-horizontal" id="del_user" >aa
+      
       </div>
+  </div>
     </main>
 
   </body>
   <script>
-  
-  </script>
+  function show_user(){
+    $.ajax(
+            {
+                url: "{{ url_for('showusers') }}",
+                async:false,
+                success: function (result) {
+                    var i;
+                    var usernames=jQuery.parseJSON(result);
+                    var num=usernames.length;
+                    $("#modules").empty();
+                    for(i=0;i<num;i++){
+                      if(usernames[i]!='admin'){
+                        var temp='<tr><th>'+usernames[i]+'</th><th><a data="'+usernames[i]+'" href="#"  class="del">删除</a></th></tr>';
+                        $("#modules").append(temp);
+                      }
+                      else{
+                        var temp='<tr><th>'+usernames[i]+'</th><th><a style="color:red">不能删除admin</a></th></tr>';
+                        $("#modules").append(temp);
+                      }
+                    }
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
 
+            }
+        )
+  }
+  show_user();
+/*function del(){
+  var username=$(this).attr('data');
+  $(this).parent().text("aaa");
+  alert($(this).index());
+  $("input[name='username']").val(username);
+}*/
+$(".del").click(function(){
+  var username=$(this).attr('data');
+  $("input[name='username']").val(username);
+  $("#del_user").show();
+  $("#del_user").html("<p>是否删除"+username+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='#' onclick='del()'>是</a>&nbsp;/&nbsp;<a onclick='reset()' href='#' >否</a></p>")
+});
+function del(){
+  $("#submit").click();
+}
+function reset(){
+  $("input[name='username']").val("");
+  $("#del_user").hide();
+}
+
+</script>
 </html>

@@ -132,6 +132,18 @@ class User(UserMixin):
         except Exception,e:
             print e
 
+    def show_user(self):
+        try:
+            with open(PROFILE_FILE,'r+') as f:
+                user_profiles = json.load(f)
+                #f.truncate()
+                usernames=[]
+                for username in user_profiles:
+                    usernames.append(username)
+                return json.dumps(usernames)
+        except Exception,e:
+            print e
+
     def del_user(self,username):
         #only admin can del user
         if self.username != 'admin':
