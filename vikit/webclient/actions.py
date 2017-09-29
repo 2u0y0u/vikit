@@ -16,9 +16,9 @@ from ..api.trigger import get_platform_proxy
 from flask import render_template, request, jsonify
 from flask import session, redirect, url_for, make_response
 from flask import g
+from IPy import IP
 
 proxy = None
-proxy2 = None
 
 
 @client_app.route('/start')
@@ -30,40 +30,6 @@ def start():
         proxy = get_client_proxy('127.0.0.1', 7000)
         proxy.regist_result_callback(on_result_feedback)
     return 'success' if proxy != None else 'fail'
-
-
-# -----------------------------------------
-@client_app.route('/admin/start')
-def start2():
-    """"""
-    global proxy2
-
-    if proxy2 == None:
-        proxy2 = get_platform_proxy(7000)
-        # proxy.regist_result_callback(on_result_feedback)
-    return 'success' if proxy != None else 'fail'
-
-
-@client_app.route('/add-default-service')
-def add_default_service():
-    module_name = request.args.get('module_name')
-    port = int(request.args.get('port'))
-    global proxy2
-    proxy2.add_default_service(module_name, port)
-    return 'add success'
-
-
-@client_app.route('/available-service-nodes')
-def get_available_service_nodes():
-    """"""
-    global proxy2
-    return json.dumps(proxy2.get_available_service_nodes())
-
-
-@client_app.route('/available-service-nodes-info')
-def get_available_service_nodes_info():
-    global proxy2
-    return json.dumps(proxy2.get_service_nodes_info())
 
 
 # ---------------------------------------------
@@ -121,26 +87,48 @@ def execute():
     """
     # def execute(self, module_name, params, offline=False, task_id=None):
     #global proxy
-    
+
     module_name = request.form['module'].strip()
     targets = request.form['target'].split('\r\n')
     payload = request.form['payload'].strip()
     config = json.loads(request.form['config'].strip())
     offline = True if request.form['offline'] != '0' else False
     for target in targets:
-        global proxy
-        task_id = proxy.execute(module_name, {"target": target,
-                                              'payload': payload,
-                                              'config': config
-                                              },
-                                offline=offline)
-        # 往结果字典加入(task_id:'processing')print
-        print task_id
-        global result
-        status_and_result=('processing',target)
-        result[task_id] = status_and_result
+        try:
+            # try to parse as ip cidr if it is successful.
+            print target
+            ips=IP(target)
+        except:
+            print 'into normal url'
+            global proxy
+            task_id = proxy.execute(module_name, {"target": target,
+                                                  'payload': payload,
+                                                  'config': config
+                                                  },
+                                    offline=offline)
+            # 往结果字典加入(task_id:'processing')print
+            global result
+            status_and_result=('processing',target)
+            result[task_id] = status_and_result
+        #parse as ip CIDR succcessfully
+        else:
+            global proxy
+            for ip in ips:
+                ip=str(ip)
+                print 'into ip CIDR'
+                task_id = proxy.execute(module_name, {"target": ip,
+                                                      'payload': payload,
+                                                      'config': config
+                                                      },
+                                        offline=offline)
+                # 往结果字典加入(task_id:'processing')print
+                global result
+                status_and_result=('processing',ip)
+                result[task_id] = status_and_result
     # 返回结果页面
     return redirect('results')
+
+
 
 
 def on_result_feedback(result_dict):
