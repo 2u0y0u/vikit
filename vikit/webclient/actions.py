@@ -108,8 +108,8 @@ def execute():
                                     offline=offline)
             # 往结果字典加入(task_id:'processing')print
             global result
-            status_and_result=('processing',target)
-            result[task_id] = status_and_result
+            status_and_result='processing'
+            result[task_id] = (status_and_result,target)
         #parse as ip CIDR succcessfully
         else:
             global proxy
@@ -123,8 +123,8 @@ def execute():
                                         offline=offline)
                 # 往结果字典加入(task_id:'processing')print
                 global result
-                status_and_result=('processing',ip)
-                result[task_id] = status_and_result
+                status_and_result='processing'
+                result[task_id] = (status_and_result,ip)
     # 返回结果页面
     return redirect('results')
 
@@ -135,8 +135,9 @@ def on_result_feedback(result_dict):
     task_id = result_dict.get('task_id')
     task_result = result_dict.get('result')
     global result
+    target=result[task_id][1]
     # 改变对应的task状态
-    status_and_result=('finished',task_result)
+    status_and_result=('finished',task_result,target)
     result[task_id] = status_and_result
 
 
@@ -162,7 +163,10 @@ def show_result(task_id):
 @client_app.route('/task_status/<task_id>', methods=['get'])
 def get_status(task_id):
     if result and result.has_key(task_id):
-        task_status=[result[task_id][0],result[task_id][1]]
+        if result[task_id][0]=='finished':
+            task_status=[result[task_id][0],result[task_id][1],result[task_id][2]]
+        else:
+            task_status=[result[task_id][0],result[task_id][1]]
         return json.dumps(task_status)  # processing finished
     else:
         return 'wrong task_id'
