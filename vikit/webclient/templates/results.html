@@ -57,7 +57,7 @@ var state=new Array();
                     if(task_status[0]=="finished"){
                         //target=result[1][0];
                         if(task_status[1][1]=='success'){
-                           var tr='<tr><th>'+task_id[j]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" href="result/'+task_id[j]+'" style="color:red">查看(漏洞)</a></th></tr>'; 
+                           var tr='<tr class="danger"><th>'+task_id[j]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" href="result/'+task_id[j]+'" style="color:red">查看</a></th></tr>'; 
                         }
                         else{
                             var tr='<tr><th>'+task_id[j]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" href="result/'+task_id[j]+'" style="color:green">查看</a></th></tr>';
