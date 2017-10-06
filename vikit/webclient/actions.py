@@ -276,6 +276,15 @@ def result_check(task_id):
     crawler_result_check=json.dumps(response)
     return render_template('crawler_result_check.html',result=crawler_result_check)
 
+@client_app.route('/result_del/<task_id>')
+def result_del(task_id):
+    task = get_targets.AsyncResult(task_id)
+    global result
+    result.pop(task)
+    return 'success'
+
+
+
 
 @client_app.route('/action', methods=['get'])
 def scan():

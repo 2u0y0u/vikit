@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html class=" ">
 {% include 'header.html' %}
-<head> </head>
+<head> 
+<style type="text/css">
+.filter{
+    margin-left: -23%;
+}
+</style>
+</head>
 <body class="">
   {% include 'left.html' %}
 <main>
@@ -9,9 +15,10 @@
     <div class="container-fluid">
         <h1 class="bread-crumb"> <strong>扫描结果</strong>
             <div class="absolute-right">
-                <form action="" method="post" class="input-group search-group" data-format="HTML" data-action="notpjax">
+                <!-- <form action="" method="post" class="input-group search-group" data-format="HTML" data-action="notpjax">
                     
-                </form>
+                </form> -->
+                <a href="#" class="button  button-rounded button-raised button-primary filter" onClick="filter()">filter</a>
             </div> </h1>
         <table class="table table-hover" id="scan_result">
             <thead>
@@ -94,7 +101,12 @@ var state=new Array();
                     if(task_status[0]=="finished"){
                         //target=result[1][0];
                       $("#scan_result").find(".unfinish"+i).remove();  
-                        var tr='<tr><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:green">查看</a></th></tr>';
+                        if(task_status[1][1]=='success'){
+                           var tr='<tr class="danger"><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:red">查看</a></th></tr>'; 
+                        }
+                        else{
+                            var tr='<tr><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:green">查看</a></th></tr>';
+                        }
                         $("#resulist").append(tr);
                         state[task_id[i]]=task_status[0];
                     }
@@ -112,7 +124,86 @@ var state=new Array();
    $(document).ready(function(){
     show_result();
     interval1=setInterval("show_unfinish_result()",3000);
+    //window.clearInterval(interval1);180000
+    setTimeout("timeout()",180000);
    });
+   function timeout(){
+    window.clearInterval(interval1);
+    for(var i=0;i<num;i++){
+        if(state[task_id[i]]=="processing"){
+            $.ajax(
+            {
+                url: "/task_status/"+task_id[i],
+                async:false,
+                success: function (result) {
+                    var task_status=jQuery.parseJSON(result);
+                    if(task_status[0]=="finished"){
+                        //target=result[1][0];
+                      $("#scan_result").find(".unfinish"+i).remove();  
+                        if(task_status[1][1]=='success'){
+                           var tr='<tr class="danger"><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:red">查看</a></th></tr>'; 
+                        }
+                        else{
+                            var tr='<tr><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:green">查看</a></th></tr>';
+                        }
+                        $("#resulist").append(tr);
+                        state[task_id[i]]=task_status[0];
+                    }
+                    else{
+                        $("#scan_result").find(".unfinish"+i).remove();  
+                        var tr='<tr class="unfinish'+i+'"><th>'+task_id[i]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" style="color:#FF6633">连接超时</a></th></tr>';
+                        $("#resulist").append(tr);
+                        state[task_id[i]]=task_status[0];
+                    }
+                    
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+        }
+    }
+   }
+   function filter(){
+    for(var i=0;i<num;i++){
+            $.ajax(
+            {
+                url: "/task_status/"+task_id[i],
+                async:false,
+                success: function (result) {
+                    var task_status=jQuery.parseJSON(result);
+                    if(task_status[1][1]!='success'){
+                      filter_remove_fail(task_id[i]);
+                    }
+                    
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+        }
+        window.location.reload();
+   }
+   function filter_remove_fail(task){
+    $.ajax(
+            {
+                url: "/result_del/"+task,
+                async:false,
+                success: function (result) {
+                    
+                    
+                },
+                error:function () {
+                    alert('ajax get_mods request error');
+                }
+
+            }
+        )
+   }
 </script>
 <script>
     
