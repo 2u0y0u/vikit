@@ -160,7 +160,27 @@ def login():
         else:
             #error = 'username or password wrong!'
             #return redirect(url_for('login',error='username or password wrong!'))
-            return 'login failed'
+            return redirect(url_for('login_fail'))
+
+@client_app.route('/login_fail',methods=['GET','POST'])
+def login_fail():
+    form = LoginForm()
+    if flask.request.method=='GET':
+        return render_template('login_fail.html', form=form)
+
+    if form.validate_on_submit():
+        user_name = request.form.get('username', None)
+        password = request.form.get('password', None)
+        user = User(user_name)
+        if user.verify_password(password):
+            login_user(user)
+            #print current_user.username
+            return redirect(url_for('main'))
+        else:
+            #error = 'username or password wrong!'
+            #return redirect(url_for('login',error='username or password wrong!'))
+            return redirect(url_for('login_fail'))
+
 
 @client_app.route('/logout')
 @login_required
@@ -180,9 +200,54 @@ def changepwd():
         new_pass = request.form.get('new_pass', None)
         user = User(current_user.username)
         #return 'password changed' / 'wrong old password'
-        return user.change_passwd(old_password=old_pass,new_password=new_pass)
+        result=user.change_passwd(old_password=old_pass,new_password=new_pass)
+        if(result=='password changed'):
+            return redirect(url_for('changepwdsuc'))
+        else:
+            return redirect(url_for('changepwdwro'))
     else:
         return 'unvalidated form'
+
+@client_app.route('/changepwdsuc',methods=['GET','POST'])
+@login_required
+def changepwdsuc():
+    form = ChangePassForm()
+    if flask.request.method=='GET':
+        return render_template('changepwdsuc.html', form=form)
+
+    if form.validate_on_submit():
+        old_pass = request.form.get('old_pass', None)
+        new_pass = request.form.get('new_pass', None)
+        user = User(current_user.username)
+        #return 'password changed' / 'wrong old password'
+        result=user.change_passwd(old_password=old_pass,new_password=new_pass)
+        if(result=='password changed'):
+            return redirect(url_for('changepwdsuc'))
+        else:
+            return redirect(url_for('changepwdwro'))
+    else:
+        return 'unvalidated form'
+
+@client_app.route('/changepwdwro',methods=['GET','POST'])
+@login_required
+def changepwdwro():
+    form = ChangePassForm()
+    if flask.request.method=='GET':
+        return render_template('changepwdwro.html', form=form)
+
+    if form.validate_on_submit():
+        old_pass = request.form.get('old_pass', None)
+        new_pass = request.form.get('new_pass', None)
+        user = User(current_user.username)
+        #return 'password changed' / 'wrong old password'
+        result=user.change_passwd(old_password=old_pass,new_password=new_pass)
+        if(result=='password changed'):
+            return redirect(url_for('changepwdsuc'))
+        else:
+            return redirect(url_for('changepwdwro'))
+    else:
+        return 'unvalidated form'
+
 
 @client_app.route('/adduser',methods=['GET','POST'])
 @login_required
@@ -197,23 +262,90 @@ def adduser():
         password = request.form.get('password', None)
         user = User(current_user.username)
         # return 'only admin can add user' / 'user existed' /'add successfully'
-        return user.add_user(user_name,password)
+        result=user.add_user(user_name,password)
+        print result
+        if(result=='add successfully'):
+            return redirect(url_for('addusersuce'))
+        elif(result=='only admin can add user'):
+            return redirect(url_for('addusernotadm'))
+        else:
+            return redirect(url_for('adduserexit'))
+    else:
+        return 'unvalidated form'
+
+@client_app.route('/addusersuce',methods=['GET','POST'])
+@login_required
+def addusersuce():
+    form = AddUserForm()
+    if flask.request.method=='GET':
+        return render_template('add_user_sucess.html', form=form)
+
+    if form.validate_on_submit():
+        #check the password is equal to comfirm_password first on front
+        user_name = request.form.get('username', None)
+        password = request.form.get('password', None)
+        user = User(current_user.username)
+        # return 'only admin can add user' / 'user existed' /'add successfully'
+        result=user.add_user(user_name,password)
+        if(result=='add successfully'):
+            return redirect(url_for('addusersuce'))
+        elif(result=='only admin can add user'):
+            return redirect(url_for('addusernotadm'))
+        else:
+            return redirect(url_for('adduserexit'))
+    else:
+        return 'unvalidated form'
+
+@client_app.route('/addusernotadm',methods=['GET','POST'])
+@login_required
+def addusernotadm():
+    form = AddUserForm()
+    if flask.request.method=='GET':
+        return render_template('add_user_notadm.html', form=form)
+
+    if form.validate_on_submit():
+        #check the password is equal to comfirm_password first on front
+        user_name = request.form.get('username', None)
+        password = request.form.get('password', None)
+        user = User(current_user.username)
+        # return 'only admin can add user' / 'user existed' /'add successfully'
+        result=user.add_user(user_name,password)
+        if(result=='add successfully'):
+            return redirect(url_for('addusersuce'))
+        elif(result=='only admin can add user'):
+            return redirect(url_for('addusernotadm'))
+        else:
+            return redirect(url_for('adduserexit'))
+    else:
+        return 'unvalidated form'
+
+@client_app.route('/adduserexit',methods=['GET','POST'])
+@login_required
+def adduserexit():
+    form = AddUserForm()
+    if flask.request.method=='GET':
+        return render_template('add_user_exit.html', form=form)
+
+    if form.validate_on_submit():
+        #check the password is equal to comfirm_password first on front
+        user_name = request.form.get('username', None)
+        password = request.form.get('password', None)
+        user = User(current_user.username)
+        # return 'only admin can add user' / 'user existed' /'add successfully'
+        result=user.add_user(user_name,password)
+        if(result=='add successfully'):
+            return redirect(url_for('addusersuce'))
+        elif(result=='only admin can add user'):
+            return redirect(url_for('addusernotadm'))
+        else:
+            return redirect(url_for('adduserexit'))
     else:
         return 'unvalidated form'
 
 @client_app.route('/showusers',methods=['GET','POST'])
 @login_required
 def showusers():
-    # form = AddUserForm()
-    # if flask.request.method=='GET':
-    #     return render_template('add_user.html', form=form)
-
-    # if form.validate_on_submit():
-    #     #check the password is equal to comfirm_password first on front
-    #     user_name = request.form.get('username', None)
-    #     password = request.form.get('password', None)
     user = User(current_user.username)
-        # return 'only admin can add user' / 'user existed' /'add successfully'
     return user.show_user()
     
 
@@ -229,10 +361,52 @@ def deluser():
         user_name = request.form.get('username', None)
         user = User(current_user.username)
         #return 'only admin can del user' / 'del successfully' / 'user is not existed'
-        return user.del_user(user_name)
+        result=user.del_user(user_name)
+        if(result=='del successfully'):
+            return redirect(url_for('del_usersuc'))
+        else:
+            return redirect(url_for('del_userfail'))
     else:
         return 'unvalidated form'
 
+@client_app.route('/del_usersuc',methods=['POST','Get'])
+@login_required
+def del_usersuc():
+    form = DelUserForm()
+    if flask.request.method=='GET':
+        return render_template('del_usersuc.html', form=form)
+
+    if form.validate_on_submit():
+        user_name = request.form.get('username', None)
+        user = User(current_user.username)
+        #return 'only admin can del user' / 'del successfully' / 'user is not existed'
+        result=user.del_user(user_name)
+        if(result=='del successfully'):
+            return redirect(url_for('del_usersuc'))
+        else:
+            return redirect(url_for('del_userfail'))
+    else:
+        return 'unvalidated form'
+
+
+@client_app.route('/del_userfail',methods=['POST','Get'])
+@login_required
+def del_userfail():
+    form = DelUserForm()
+    if flask.request.method=='GET':
+        return render_template('del_userfail.html', form=form)
+
+    if form.validate_on_submit():
+        user_name = request.form.get('username', None)
+        user = User(current_user.username)
+        #return 'only admin can del user' / 'del successfully' / 'user is not existed'
+        result=user.del_user(user_name)
+        if(result=='del successfully'):
+            return redirect(url_for('del_usersuc'))
+        else:
+            return redirect(url_for('del_userfail'))
+    else:
+        return 'unvalidated form'
 
 
 

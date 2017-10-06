@@ -22,24 +22,24 @@
       <div class="container-fluid">
         <h1 class="bread-crumb">
           <strong>
-            用户管理 / 修改密码
+            用户管理 / 添加用户
           </strong>
         </h1>
-        <form class="form-horizontal" action="/changepwd" method="POST" data-action="notpjax"  onsubmit="return check()">
+        <form class="form-horizontal" action="/adduser" method="POST" data-action="notpjax" onsubmit="return check()" >
           <div class="form-group form-group-sm">
             <label class="col-xs-2 control-label">
-              old:
+              Username:
             </label>
             <div class="col-xs-8 form-inline">
-          <input type="password" name="old_pass" class="input form-control" placeholder="Old password" style="width:300px" spellcheck="false"/>
+          <input type="password" name="username" class="input form-control" placeholder="Old password" style="width:300px" spellcheck="false"/>
             </div>
           </div>
           <div class="form-group form-group-sm">
             <label class="col-xs-2 control-label">
-              New:
+              Password:
             </label>
             <div class="col-xs-8 form-inline">
-              <input type="password" name="new_pass" class="input form-control" placeholder="New password" style="width:300px" spellcheck="false"/>
+              <input type="password" name="password" class="input form-control" placeholder="New password" style="width:300px" spellcheck="false"/>
               
             </div>
             </div>
@@ -48,7 +48,7 @@
               Confirm:
             </label>
             <div class="col-xs-8 form-inline">
-              <input type="password" name="confirm_new_pass" class="input form-control" placeholder="Confirm new password" style="width:300px" spellcheck="false"/>
+              <input type="password" name="confirm_password" class="input form-control" placeholder="Confirm password" style="width:300px" spellcheck="false"/>
               
             </div>
             </div>
@@ -61,6 +61,9 @@
           </div>
           {{ form.csrf_token }}
         </form>
+        <div class="form-horizontal" id="add_result" >
+      <p style="color:red">添加用户失败，该用户已经存在!</p>
+      </div>
       </div>
     </main>
 
@@ -70,8 +73,8 @@
       $("input[type='password']").val("");
     }
     function check(){
-      var pass=$("input[name='new_pass']").val();
-      var confirm=$("input[name='confirm_new_pass']").val();
+      var pass=$("input[name='password']").val();
+      var confirm=$("input[name='confirm_password']").val();
       if(pass==confirm){
         return true;
       }

@@ -100,9 +100,9 @@ html,body{
 	<div class="wel">user login</div>
 	
 	<form class="form" action="/login" name="login" method="post" onsubmit="return state()">
-		{% if error %}
-		<p style="color: red; margin-bottom: 0">error:{{error}}</p>
-		{% endif %}
+		
+		<p style="color: red; margin-bottom: 0">error:用户名或密码错误</p>
+		
 		<p><span>username:</span><input type="text" name="username"  class="input" placeholder="username" spellcheck="false"/></p>
 		<p><span>password:</span><input type="password" name="password" class="input" placeholder="password" spellcheck="false"/></p>
 		<input type="submit" name="submit" value="Login" class="submit button button-raised button-primary button-pill"/>

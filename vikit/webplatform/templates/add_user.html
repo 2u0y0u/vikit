@@ -19,7 +19,7 @@
             用户管理 / 添加用户
           </strong>
         </h1>
-        <form class="form-horizontal" action="/adduser" method="POST" data-action="notpjax" >
+        <form class="form-horizontal" action="/adduser" method="POST" data-action="notpjax" onsubmit="return check()" >
           <div class="form-group form-group-sm">
             <label class="col-xs-2 control-label">
               Username:
@@ -62,6 +62,17 @@
   <script>
     function reset(){
       $("input[type='password']").val("");
+    }
+    function check(){
+      var pass=$("input[name='password']").val();
+      var confirm=$("input[name='confirm_password']").val();
+      if(pass==confirm){
+        return true;
+      }
+      else{
+        alert("重复输入密码错误！");
+        return false;
+      }
     }
   </script>
 
