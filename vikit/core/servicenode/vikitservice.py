@@ -142,6 +142,7 @@ class VikitService(vikitbase.VikitBase):
         #
         # load mod plugins firstly
         import sys
+        sys.path.extend(self.config.default_mod_paths)
         from vikit.mods.config import PLUGINS_DIR
         sys.path.append(PLUGINS_DIR+'beebeeto')
         sys.path.append(PLUGINS_DIR+'bugscan')

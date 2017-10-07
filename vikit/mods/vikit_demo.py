@@ -12,7 +12,7 @@ from vikit.core.basic.modinput import TargetDemand, PayloadDemand, ParamDemand
 from vikit.core.basic import target, payload, param
 
 
-NAME = 'demo'
+NAME = 'vikit_demo'
 
 AUTHOR = 'vikit'
 
@@ -31,7 +31,7 @@ def test(target, payload, config):
     #print('start execute mod: demo')
     time.sleep(3)
     #print('execute successfully!')
-    
+
     PERSISTENCE_FUNC('target',target)
     print
     print
@@ -40,7 +40,7 @@ def test(target, payload, config):
     print
     print
     print
-    
+
     return target, payload, config, 'http://villanaadsfch.top'
 
 EXPORT_FUNC = test
