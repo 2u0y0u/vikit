@@ -283,6 +283,13 @@ def result_del(task_id):
     result.pop(task)
     return 'success'
 
+@client_app.route('/task_status_timeout/<task_id>')
+def task_status_timeout(task_id):
+    global result
+    if result and result.has_key(task_id):
+        target=result[task_id][1]
+        result[task_id]=('timeout',target)
+        return 'success'
 
 
 
