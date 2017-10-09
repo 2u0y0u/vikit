@@ -109,7 +109,7 @@ def execute():
             # 往结果字典加入(task_id:'processing')print
             global result
             status_and_result='processing'
-            result[task_id] = (status_and_result,target)
+            result[task_id] = (status_and_result,target,module_name)
         #parse as ip CIDR succcessfully
         else:
             global proxy
@@ -124,7 +124,7 @@ def execute():
                 # 往结果字典加入(task_id:'processing')print
                 global result
                 status_and_result='processing'
-                result[task_id] = (status_and_result,ip)
+                result[task_id] = (status_and_result,ip,module_name)
     # 返回结果页面
     return redirect('results')
 
@@ -136,8 +136,9 @@ def on_result_feedback(result_dict):
     task_result = result_dict.get('result')
     global result
     target=result[task_id][1]
+    module=result[task_id][2]
     # 改变对应的task状态
-    status_and_result=('finished',task_result,target)
+    status_and_result=('finished',task_result,target,module)
     result[task_id] = status_and_result
 
 
@@ -164,9 +165,9 @@ def show_result(task_id):
 def get_status(task_id):
     if result and result.has_key(task_id):
         if result[task_id][0]=='finished':
-            task_status=[result[task_id][0],result[task_id][1],result[task_id][2]]
+            task_status=[result[task_id][0],result[task_id][1],result[task_id][2],result[task_id][3]]
         else:
-            task_status=[result[task_id][0],result[task_id][1]]
+            task_status=[result[task_id][0],result[task_id][1],result[task_id][2]]
         return json.dumps(task_status)  # processing finished
     else:
         return 'wrong task_id'
@@ -288,7 +289,8 @@ def task_status_timeout(task_id):
     global result
     if result and result.has_key(task_id):
         target=result[task_id][1]
-        result[task_id]=('timeout',target)
+        module=result[task_id][2]
+        result[task_id]=('timeout',target,module)
         return 'success'
 
 
