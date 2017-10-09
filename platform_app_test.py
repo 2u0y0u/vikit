@@ -16,10 +16,13 @@ config = twistedplatform.PlatformConfig()
 p = twistedplatform.TwistedPlatform('thisisaplatform_id', config=config)
 
 p.start()
-p.add_default_service('demo', 7034)
+p.add_default_service('vikit_demo', 7034)
 p.add_default_service('ms17-010',7035)
 p.add_default_service('heartbleed',7036)
-
+p.add_default_service('ftp_crack',7037)
+p.add_default_service('wordpress_crackpass',7038)
+p.add_default_service('tomcat_crack',7039)
+p.add_default_service('jenkins_CVE_2017_1000353',7040)
 #p.add_default_service('SVN_information_disclosure_', 7035)
 #p.add_default_service('bugscan-1', 7036)
 # kspoc is not useable
