@@ -4,7 +4,10 @@
 <head> 
 <style type="text/css">
 .filter{
-    margin-left: -23%;
+    margin-left: -15%;
+}
+.refresh{
+    margin-right: 11%;
 }
 </style>
 </head>
@@ -18,12 +21,14 @@
                 <!-- <form action="" method="post" class="input-group search-group" data-format="HTML" data-action="notpjax">
                     
                 </form> -->
+                <a href="#" class="button  button-rounded button-raised button-action refresh" onClick="refresh()">refresh</a>
                 <a href="#" class="button  button-rounded button-raised button-primary filter" onClick="filter()">filter</a>
             </div> </h1>
         <table class="table table-hover" id="scan_result">
             <thead>
             <tr>
                 <th>task_id</th>
+                <th>module</th>
                 <th>target</th>
                 <th>state</th>
                 <th>action</th>
@@ -64,23 +69,23 @@ var state=new Array();
                     if(task_status[0]=="finished"){
                         //target=result[1][0];
                         if(task_status[1][1]=='success'){
-                           var tr='<tr class="danger"><th>'+task_id[j]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" href="result/'+task_id[j]+'" style="color:red">查看</a></th></tr>'; 
+                           var tr='<tr class="danger"><th>'+task_id[j]+'</th><th>'+task_status[3]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" href="result/'+task_id[j]+'" style="color:red">查看</a></th></tr>'; 
                         }
                         else{
-                            var tr='<tr><th>'+task_id[j]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" href="result/'+task_id[j]+'" style="color:green">查看</a></th></tr>';
+                            var tr='<tr><th>'+task_id[j]+'</th><th>'+task_status[3]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" href="result/'+task_id[j]+'" style="color:green">查看</a></th></tr>';
                         }
                     
                     $("#resulist").append(tr);
                     state[task_id[j]]=task_status[0];
                     }
                     else if(task_status[0]=="timeout"){
-                        var tr='<tr class="unfinish'+j+'"><th>'+task_id[j]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" style="color:#FF6633">连接超时</a></th></tr>';
+                        var tr='<tr class="unfinish'+j+'"><th>'+task_id[j]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" style="color:#FF6633">连接超时</a></th></tr>';
                         $("#resulist").append(tr);
                         state[task_id[j]]=task_status[0];
                     }
                     else{
                         //target=result[1];
-                        var tr='<tr class="unfinish'+j+'"><th>'+task_id[j]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" style="color:#3333FF">未完成</a></th></tr>';
+                        var tr='<tr class="unfinish'+j+'"><th>'+task_id[j]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" style="color:#3333FF">未完成</a></th></tr>';
                         $("#resulist").prepend(tr);
                         state[task_id[j]]=task_status[0];
                     }
@@ -107,15 +112,15 @@ var state=new Array();
                         //target=result[1][0];
                       $("#scan_result").find(".unfinish"+i).remove();  
                         if(task_status[1][1]=='success'){
-                           var tr='<tr class="danger"><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:red">查看</a></th></tr>'; 
+                           var tr='<tr class="danger"><th>'+task_id[i]+'</th><th>'+task_status[3]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:red">查看</a></th></tr>'; 
                         }
                         else if(task_status[0]=="timeout"){
-                            var tr='<tr class="unfinish'+i+'"><th>'+task_id[i]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" style="color:#FF6633">连接超时</a></th></tr>';
+                            var tr='<tr class="unfinish'+i+'"><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" style="color:#FF6633">连接超时</a></th></tr>';
                             $("#resulist").append(tr);
                             state[task_id[i]]=task_status[0];
                         }
                         else{
-                            var tr='<tr><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:green">查看</a></th></tr>';
+                            var tr='<tr><th>'+task_id[i]+'</th><th>'+task_status[3]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:green">查看</a></th></tr>';
                         }
                         $("#resulist").append(tr);
                         state[task_id[i]]=task_status[0];
@@ -151,17 +156,17 @@ var state=new Array();
                         //target=result[1][0];
                       $("#scan_result").find(".unfinish"+i).remove();  
                         if(task_status[1][1]=='success'){
-                           var tr='<tr class="danger"><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:red">查看</a></th></tr>'; 
+                           var tr='<tr class="danger"><th>'+task_id[i]+'</th><th>'+task_status[3]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:red">查看</a></th></tr>'; 
                         }
                         else{
-                            var tr='<tr><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:green">查看</a></th></tr>';
+                            var tr='<tr><th>'+task_id[i]+'</th><th>'+task_status[3]+'</th><th>'+task_status[2]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:green">查看</a></th></tr>';
                         }
                         $("#resulist").append(tr);
                         state[task_id[i]]=task_status[0];
                     }
                     else{
                         $("#scan_result").find(".unfinish"+i).remove();  
-                        var tr='<tr class="unfinish'+i+'"><th>'+task_id[i]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" style="color:#FF6633">连接超时</a></th></tr>';
+                        var tr='<tr class="unfinish'+i+'"><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" style="color:#FF6633">连接超时</a></th></tr>';
                         $("#resulist").append(tr);
                         result_state_timeout(task_id[i]);
                         state[task_id[i]]=task_status[0];
@@ -230,6 +235,9 @@ var state=new Array();
 
             }
         )
+   }
+   function refresh(){
+    window.location.reload();
    }
 </script>
 <script>
