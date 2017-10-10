@@ -135,11 +135,12 @@ def on_result_feedback(result_dict):
     task_id = result_dict.get('task_id')
     task_result = result_dict.get('result')
     global result
-    target=result[task_id][1]
-    module=result[task_id][2]
-    # 改变对应的task状态
-    status_and_result=('finished',task_result,target,module)
-    result[task_id] = status_and_result
+    if result[task_id][0]!='finished':
+        target=result[task_id][1]
+        module=result[task_id][2]
+        # 改变对应的task状态
+        status_and_result=('finished',target,module,task_result)
+        result[task_id] = status_and_result
 
 
 @client_app.route('/results', methods=['GET'])
@@ -287,7 +288,7 @@ def result_del(task_id):
 @client_app.route('/task_status_timeout/<task_id>')
 def task_status_timeout(task_id):
     global result
-    if result and result.has_key(task_id):
+    if result and result.has_key(task_id) and result[task_id][0]=='processing':
         target=result[task_id][1]
         module=result[task_id][2]
         result[task_id]=('timeout',target,module)
