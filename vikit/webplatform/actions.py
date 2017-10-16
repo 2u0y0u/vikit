@@ -61,6 +61,7 @@ def shutdown():
 
     proxy.shutdown()
     # return '<h1>Success</h1>'
+    proxy=None
     return "closed"
 
 

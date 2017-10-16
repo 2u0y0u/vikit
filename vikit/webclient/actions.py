@@ -37,9 +37,9 @@ def start():
 def shutdown():
     """"""
     global proxy
-
     proxy.shutdown()
     # return '<h1>Success</h1>'
+    proxy=None
     return "closed"
 
 
