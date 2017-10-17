@@ -207,7 +207,7 @@ var state=new Array();
                 async:false,
                 success: function (result) {
                     var task_status=jQuery.parseJSON(result);
-                    if(task_status[1][1]!='success'){
+                    if(task_status[3][1]!='success'){
                       filter_remove_fail(task_id[i]);
                     }
                     
