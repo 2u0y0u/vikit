@@ -73,7 +73,7 @@ def check(ip, port, timeout):
             return u"存在Jenkins反序列化漏洞(CVE-2017-1000353)"
     except:
         return False
-        
+
 def exploit(target, payload, config):
     # parse url to host and port
     timeout = 5
@@ -92,4 +92,4 @@ def exploit(target, payload, config):
 EXPORT_FUNC = exploit
 
 if __name__ == '__main__':
-    print exploit('http://127.0.0.1:8080','','{}')
+    print exploit('http://127.0.0.1:8082','','{}')
