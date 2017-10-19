@@ -78,7 +78,7 @@ def on_select_module(module_name):
 
 
 result = {}
-
+crawler_target=[]
 
 @client_app.route('/execute', methods=['post'])
 def execute():
@@ -294,9 +294,26 @@ def task_status_timeout(task_id):
         result[task_id]=('timeout',target,module)
         return 'success'
 
+@client_app.route('/crawler_target')
+def add_clawer_target():
+    global crawler_target
+    target= request.args.get('url')
+    crawler_target.append(target)
+    return 'success'
 
+@client_app.route('/clear_crawler_target')
+def clear_clawer_target():
+    global crawler_target
+    crawler_target=[]
+    return 'success'
 
 @client_app.route('/action', methods=['get'])
 def scan():
+    global crawler_target
+    back_target=json.dumps(crawler_target)
+    return render_template('index.html',target=back_target)
+
+@client_app.route('/action2', methods=['get'])
+def scan2():
     url= request.args.get('url')
-    return render_template('index.html',target=url)
+    return render_template('index.html',target2=url)

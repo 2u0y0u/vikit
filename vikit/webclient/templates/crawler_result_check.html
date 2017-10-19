@@ -90,7 +90,7 @@ for(i=0;i<result_num;i++){
             row:{
                 checkbox:'<input data="'+result['result'][i]+'" type="checkbox" >',
                 result:result['result'][i],
-                action:'<a href="/action?url='+result['result'][i]+'">扫描</a>'
+                action:'<a href="/action2?url='+result['result'][i]+'">扫描</a>'
             }
         });
     }
@@ -100,7 +100,7 @@ for(i=0;i<result_num;i++){
             row:{
                 checkbox:'<input data="'+result['result'][i]['url']+' type="checkbox">',
                 result:result['result'][i]['url'],
-                action:'<a href="/action?url='+result['result'][i]['url']+'">扫描</a>'
+                action:'<a href="/action2?url='+result['result'][i]['url']+'">扫描</a>'
             }
         });
     }
@@ -124,13 +124,34 @@ $(document).on('click','.dropdown-menu', function(){
 var targets='';
 $("#result_num").text('共'+result_num+'条数据');
 function scan_select(){
+    $.ajax(
+            {
+                url: "/clear_crawler_target",
+                async:false,
+                success: function (result) { 
+                },
+                error:function (e) {
+                    alert(e);
+                }
+            }
+        )
     $("#modules tr td").find("input[type='checkbox']:checked").each(function(){
         
           var target=$(this).attr("data");
-          targets=targets+target+'\\n';
-          
+          //targets=targets+target+'\\n';"/add-default-service"+"?module_name="+module_name+"&port="+port,
+          $.ajax(
+            {
+                url: "/crawler_target"+"?url="+target,
+                async:false,
+                success: function (result) { 
+                },
+                error:function (e) {
+                    alert(e);
+                }
+            }
+        )
       });
-    window.location.href="/action?url="+targets+"";
+    window.location.href="/action";
 }
 </script>
 

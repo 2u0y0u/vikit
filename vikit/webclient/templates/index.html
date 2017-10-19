@@ -101,9 +101,24 @@
         $("#scan-mode option[data='0']").text(" Loading.... ");
         setTimeout("ajax_get_mods()", 1000);           
     }
-    var target='{{target}}';
+    var target='{{target|safe}}';
     if(target){
-      $("#target").val(target);
+      var targets=jQuery.parseJSON(target);
+      var num=targets.length;
+      var target_write="";
+      for(var i=0;i<num;i++){
+        if(i<num-1){
+          target_write=target_write+targets[i]+"\n";
+        }
+        else{
+          target_write=target_write+targets[i];
+        }
+      }
+      $("#target").val(target_write);
+    }
+    var target2='{{target2}}';
+    if(target2){
+      $("#target").val(target2);
     }
   });
 
