@@ -41,6 +41,7 @@
 <script type="text/javascript">
 var i;
 var services=new Array();
+var services_name= new Array();
 var services_num;
 $(document).ready(function(){
     $("#service_list").empty();
@@ -93,13 +94,19 @@ function show_service2(result){
     var result4=result3.replace(/'/g,'"').replace(/u"/g,'"').replace("<ServiceInfo Desc:<ServiceDesc:","").replace("> LauncherInfo:<ServiceLaucherInfo config",', "LauncherInfo"').replace(/>/g,"").replace(/</g,"").replace(/ServiceInfo Desc:ServiceDesc: /g,'"').replace(/ LauncherInfo:ServiceLaucherInfo config:/g,',"LauncherInfo":').replace(/"{"/g,'{"');
     var str="["+result4+"]";
  var service = jQuery.parseJSON(str);
- console.log(service);
+ var flag;
+ //console.log(service);
     ajax_get_service();
     
     for(i=0;i<services_num;i++){
     /*$("#service_list").append('<tr><td>'+services[i]+'</td><td>'+service[0][services[i]].ip+'</td><td>'+service[0][services[i]].service_info.NAME+'</td><td>'+service[0][services[i]].service_node_id+'</td></tr>')*/
-        $("#service_list").append('<tr><td>'+service[0][services[i]].service_info.NAME+'</td><td>'+service[0][services[i]].LauncherInfo.port+'</td><td><a href="check_service/'+service[0][services[i]].service_info.NAME+'" style="color:green">查看</a></td></tr>');
+        flag=jQuery.inArray(service[0][services[i]].service_info.NAME,services_name);
+        if(flag==-1){
+            $("#service_list").append('<tr><td>'+service[0][services[i]].service_info.NAME+'</td><td>'+service[0][services[i]].LauncherInfo.port+'</td><td><a href="check_service/'+service[0][services[i]].service_info.NAME+'" style="color:green">查看</a></td></tr>');
+            services_name.push(service[0][services[i]].service_info.NAME);
+        }
     }
+        
 }
 </script>
 </html>
