@@ -7,15 +7,15 @@
 <main>
     {% include 'banner.html' %}
     <div class="container-fluid">
-        <h1 class="bread-crumb"> <strong>平台管理/ Service列表</strong></h1>
+        <h1 class="bread-crumb"> <strong>平台管理/ <a href="/service" style="color: #0099CC;">Service列表</a>/  {{name}}</strong></h1>
         
         <table class="table table-hover">
             <thead>
             <tr>
                 <th>Name</th>
-                <th>Port</th>
-                <th>action</th>
-                <!-- <th>Service_Node_Id</th> --><!-- INDEX FROM_ID IP RAM_PERCENT CPU_PERCENT -->
+                <th>Id</th>
+                <th>Ip</th>
+                <th>Service_Node_Id</th><!-- INDEX FROM_ID IP RAM_PERCENT CPU_PERCENT -->
             </tr>
             </thead>
             <tbody id="service_list">
@@ -42,6 +42,7 @@
 var i;
 var services=new Array();
 var services_num;
+var name='{{name}}';
 $(document).ready(function(){
     $("#service_list").empty();
     get_available_services_info();
@@ -97,8 +98,9 @@ function show_service2(result){
     ajax_get_service();
     
     for(i=0;i<services_num;i++){
-    /*$("#service_list").append('<tr><td>'+services[i]+'</td><td>'+service[0][services[i]].ip+'</td><td>'+service[0][services[i]].service_info.NAME+'</td><td>'+service[0][services[i]].service_node_id+'</td></tr>')*/
-        $("#service_list").append('<tr><td>'+service[0][services[i]].service_info.NAME+'</td><td>'+service[0][services[i]].LauncherInfo.port+'</td><td><a href="check_service/'+service[0][services[i]].service_info.NAME+'" style="color:green">查看</a></td></tr>');
+        if(service[0][services[i]].service_info.NAME==name){
+            $("#service_list").append('<tr><td>'+service[0][services[i]].service_info.NAME+'</td><td>'+services[i]+'</td><td>'+service[0][services[i]].ip+'</td><td>'+service[0][services[i]].service_node_id+'</td></tr>')
+        }
     }
 }
 </script>

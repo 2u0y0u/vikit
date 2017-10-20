@@ -129,6 +129,12 @@ def get_service_info(service_id):
     global proxy
     return json.dumps(proxy.get_service_info_by_id(service_id))
 
+@client_app.route('/check_service/<service_name>', methods=['GET'])
+@login_required
+def check_service(service_name):
+    return render_template('service_check.html',name=service_name)
+
+
 
 # common route
 @client_app.route('/', methods=['GET'])
