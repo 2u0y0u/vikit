@@ -12,7 +12,7 @@
             漏洞检测 / 添加扫描
           </strong>
         </h1>
-        <form class="form-horizontal" action="/execute" method="POST" data-action="notpjax">
+        <form class="form-horizontal" action="/execute" method="POST" data-action="notpjax" onsubmit="return check()">
         <div class="form-group form-group-sm">
             <label class="col-xs-2 control-label">
               module:
@@ -186,27 +186,31 @@
         //$('#module_help_name').text(module_name);
         $('#module_help').html(help_str);
     }
-    /*function check(){
+    function check(){
     
-    r=/[{]+["]+[param1]+["]+[:]+["]+\w+["]+[,]+["]+[param2]+["]+[:]+["]+\w+["]+[}]+$/;
+    //r=/[{]+["]+[param1]+["]+[:]+["]+\w+["]+[,]+["]+[param2]+["]+[:]+["]+\w+["]+[}]+$/;
     param=$("#param").val();
     var module=$("option:selected").val();
-    
-    if(re.test(param)){
+    //if(re.test(param)){
       if(module!="0"){
+        //return true;
+        if(param==""){
+          
+          $("#param").val("{}");
+          return true;
+        }
         return true;
-      
       }
       else{
         alert("choice modules");
         return false;
       }
-    }
-    else{
+    //}
+    /*else{
         alert("config error!");
         return false;
-    }
- }*/
+    }*/
+ }
  /*function getdata(){
   var data=$(".target_address").val();
   var datasp=data.split("\n");
