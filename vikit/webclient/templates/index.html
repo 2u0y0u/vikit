@@ -22,12 +22,10 @@
                 <option value="0" data="0" selected="slected">
                   SelectModule
                 </option>
-                <!-- <option value="1" data="1" >
-                  专家模式$("#scan-mode option[data='0']").text();
-                </option> --><!-- line 582 -->
               </select>
-              
+              <input type="text" name="search" id="search" class="input form-control" placeholder="Search" />
             </div>
+
           </div>
           <div class="form-group form-group-sm form-expert">
             <label class="col-xs-2 control-label">
@@ -211,6 +209,46 @@
         return false;
     }*/
  }
+ /*$("#scan-mode").click(function(){
+  var search=$("#search").val();
+  if(search!=""){
+    $("#scan-mode").find("option").each(function(){
+    var module_search=$(this).text();
+    if(module_search.indexOf(search)<0){
+      $(this).hide();
+    }
+    else{
+      $(this).show();
+    }
+  })
+  }
+  else{
+    $("#scan-mode").find("option").each(function(){
+      $(this).show();
+  })
+  }
+  
+ });*/
+ $("#search").change(function(){
+  console.log(1);
+  var search=$("#search").val();
+  if(search!=""){
+    $("#scan-mode").find("option").each(function(){
+    var module_search=$(this).text();
+    if(module_search.indexOf(search)<0){
+      $(this).hide();
+    }
+    else{
+      $(this).show();
+    }
+  })
+  }
+  else{
+    $("#scan-mode").find("option").each(function(){
+      $(this).show();
+  })
+  }
+ });
  /*function getdata(){
   var data=$(".target_address").val();
   var datasp=data.split("\n");
