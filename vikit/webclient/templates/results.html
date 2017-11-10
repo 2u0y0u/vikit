@@ -48,6 +48,7 @@ var task_id=new Array();
 var target;
 var interval1;
 var num;
+var error=false;
 var state=new Array();
    function show_result(){
     var str='{{result|safe}}';
@@ -93,11 +94,18 @@ var state=new Array();
                     
                 },
                 error:function () {
-                    alert('ajax get_mods request error');
+                    console.log('ajax get_results request error');
+                    error=true;
+                    
                 }
 
             }
         )
+        if(error){
+            alert("ajax get_results request error");
+            window.clearInterval(interval1);
+            break;
+        }
     }
    }
    function show_unfinish_result(){
@@ -129,14 +137,22 @@ var state=new Array();
                     
                 },
                 error:function () {
-                    alert('ajax get_mods request error');
+                    console.log('ajax get_results request error');
+                    error=true;
+                    
                 }
 
             }
         )
+          if(error){
+            alert("ajax get_results request error");
+            window.clearInterval(interval1);
+            break;
+        }
+        }  
         }
     }
-   }
+   
    $(document).ready(function(){
     show_result();
     interval1=setInterval("show_unfinish_result()",3000);
@@ -169,19 +185,30 @@ var state=new Array();
                         $("#scan_result").find(".unfinish"+i).remove();  
                         var tr='<tr class="unfinish'+i+'"><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" style="color:#FF6633">连接超时</a></th></tr>';
                         $("#resulist").append(tr);
-                        result_state_timeout(task_id[i]);
-                        state[task_id[i]]=task_status[0];
+                        if(error==false){
+                            result_state_timeout(task_id[i]);
+                            state[task_id[i]]=task_status[0];
+                        }
+                        
                     }
                     
                 },
                 error:function () {
-                    alert('ajax get_mods request error');
+                    console.log('ajax get_results request error');
+                    error=true;
+                    
                 }
 
             }
         )
+        if(error){
+            alert("ajax get_results request error");
+            window.clearInterval(interval1);
+            break;
         }
-    }
+        }
+        }
+    
    }
    function result_state_timeout(task){
     $.ajax(
@@ -193,7 +220,10 @@ var state=new Array();
                     
                 },
                 error:function () {
-                    alert('ajax get_mods request error');
+                    console.log('ajax timeout request error');
+                    error=true;
+                    alert('ajax timeout request error');
+                    return 0;
                 }
 
             }
@@ -208,18 +238,30 @@ var state=new Array();
                 success: function (result) {
                     var task_status=jQuery.parseJSON(result);
                     if(task_status[3][1]!='success'){
-                      filter_remove_fail(task_id[i]);
+                        if(error==false){
+                            filter_remove_fail(task_id[i]);
+                        }
+                      
                     }
                     
                 },
                 error:function () {
-                    alert('ajax get_mods request error');
+                    console.log('ajax filter request error');
+                    error=true;
+                    
+                    
                 }
 
             }
         )
+            if(error){
+            break;
         }
-        window.location.reload();
+        }
+        refresh();
+        if(error){
+        alert("ajax filter request error");
+    }
    }
    function filter_remove_fail(task){
     $.ajax(
@@ -231,14 +273,19 @@ var state=new Array();
                     
                 },
                 error:function () {
-                    alert('ajax get_mods request error');
+                    console.log('ajax filter request error');
+                    error=true;
+                    alert('ajax filter request error');
+                    return 0;
                 }
 
             }
         )
    }
    function refresh(){
-    window.location.reload();
+    //window.location.reload();
+    $("#resulist").empty();
+    show_result();
    }
 </script>
 <script>

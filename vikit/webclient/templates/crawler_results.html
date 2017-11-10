@@ -38,6 +38,7 @@ var claw_task_id=new Array();
 var claw_task_id_pro=new Array();
 var colorbar=new Array();
 var claw_result_dic;
+var error=false;
    function show_result(){
     var str='{{result|safe}}';
     claw_result_dic=jQuery.parseJSON(str);
@@ -45,14 +46,13 @@ var claw_result_dic;
     var k=0;
     for (var key in claw_result_dic){
         claw_task_id[i]=key;
-        /*alert(claw_task_id[i]);
-        alert(claw_result_dic[claw_task_id[i]]);
-        alert(claw_result_dic[claw_task_id[i]][0]);*/
         i++;
     }
     var num=claw_task_id.length;
     $("#resulist").empty();
     for(var j=0;j<num;j++){
+        error=true;
+        alert(error);
         $.ajax(
             {
                 url: "/status/"+claw_task_id[j],
@@ -83,11 +83,17 @@ var claw_result_dic;
                     
                 },
                 error:function () {
-                    alert('ajax get_mods request error');
+                    console.log('ajax get_crawler_results request error');
+                    error=true;
                 }
 
             }
         )
+        if(error){
+            alert("ajax get_crawler_results error");
+            window.clearInterval(interval2);
+            break;
+        }
     }
    }
    function show_proresult(){
@@ -124,11 +130,17 @@ var claw_result_dic;
                     
                 },
                 error:function () {
-                    alert('ajax get_mods request error');
+                    console.log('ajax get_crawler_results request error');
+                    error=true;
                 }
 
             }
         )
+        if(error){
+            alert("ajax get_crawler_results error");
+            window.clearInterval(interval2);
+            break;
+        }
     }
     }
    }
