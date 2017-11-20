@@ -48,14 +48,35 @@ $("[name='my-checkbox']").bootstrapSwitch({
         size:"small",  
         onSwitchChange:function(event,state){ 
             if(state==true){  
-                $.ajax(
+                stop();
+            }else{  
+                start();
+            }  
+        }
+});
+/*$(".bootstrap-switch-label").click(function(e){
+  //e.preventDefault();
+  e.stopPropagation();
+  alert(1);
+  if($.cookie('state')=='online'){
+    $("[name='my-checkbox']").bootstrapSwitch('state',false);
+  }
+  else{
+    $("[name='my-checkbox']").bootstrapSwitch('state',true);
+  }
+  
+});*/
+/*document.body.addEventListener("click",function(e){
+alert(e.target.className);
+});*/
+function stop(){
+  $.ajax(
             {
                 url: "{{ url_for('shutdown') }}",
                 async:false,
                 success: function (result) {
-
                     if(result == 'closed'){
-                        alert('stop success');
+                      console.log('stop success');
                         $.cookie('state','offline');
                         try{
                           window.clearInterval(interval1);
@@ -78,11 +99,7 @@ $("[name='my-checkbox']").bootstrapSwitch({
 
             }
         )
-            }else{  
-                start();
-            }  
-        }
-});
+}
 $(document).ready(function(){
         if($.cookie('state')==null){
             $.cookie('state','offline');
@@ -107,7 +124,7 @@ function start(){
                 success: function (result) {
                     if(result == 'success'){
                       if($.cookie('state')=='offline'){
-                        alert('start success');
+                        console.log('start success');
                         $.cookie('state','online');
                         try{
                           $("#scan-mode option[data='0']").text(" Loading.... ");

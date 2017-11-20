@@ -103,7 +103,7 @@ $("[name='my-checkbox']").bootstrapSwitch({
                 success: function (result) {
 
                     if(result == 'closed'){
-                        alert('stop success');
+                        console.log('stop success');
                         $.cookie('state','offline');
                     }
                 },
@@ -127,7 +127,7 @@ function start(){
                 success: function (result) {
                     if(result == 'success'){
                       if($.cookie('pstate')=='offline'){
-                        alert('start success');
+                        console.log('start success');
                         $.cookie('pstate','online');
                       }
                         
