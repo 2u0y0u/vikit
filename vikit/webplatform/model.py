@@ -7,7 +7,7 @@ import os
 
 # define profile.json constant, the file is used to
 # save user name and password_hash
-PROFILE_FILE = "/root/Desktop/vikit/vikit/webplatform/profiles.json"
+PROFILE_FILE = "profiles.json"
 
 class User(UserMixin):
     def __init__(self, username):
