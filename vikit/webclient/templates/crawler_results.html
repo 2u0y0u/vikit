@@ -51,8 +51,6 @@ var error=false;
     var num=claw_task_id.length;
     $("#resulist").empty();
     for(var j=0;j<num;j++){
-        error=true;
-        alert(error);
         $.ajax(
             {
                 url: "/status/"+claw_task_id[j],
