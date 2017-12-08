@@ -7,7 +7,10 @@
 """
 
 import time
-import queue
+try:
+    import Queue as queue
+except ImportError:
+    import queue
 from abc import ABCMeta, abstractmethod
 
 from ..vikitlogger import get_netio_logger
