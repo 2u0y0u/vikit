@@ -30,6 +30,7 @@ from . import utils
 import sys
 from vikit.mods.config import PLUGINS_DIR
 sys.path.append(PLUGINS_DIR)
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 #

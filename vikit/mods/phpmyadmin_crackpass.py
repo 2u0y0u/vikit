@@ -80,5 +80,6 @@ def exploit(target, payload, config):
 
 EXPORT_FUNC = exploit
 
+
 if __name__ == '__main__':
     print exploit('http://192.168.1.183:8080','','{}')
