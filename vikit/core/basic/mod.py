@@ -8,10 +8,7 @@
 
 from __future__ import unicode_literals
 
-try:
-    import Queue as queue
-except ImportError:
-    import queue
+import queue
 import time
 import types
 import os
