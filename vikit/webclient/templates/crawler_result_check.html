@@ -98,7 +98,7 @@ for(i=0;i<result_num;i++){
         $table.bootstrapTable("insertRow",{
             index:index,
             row:{
-                checkbox:'<input data="'+result['result'][i]['url']+' type="checkbox">',
+                checkbox:'<input data="'+result['result'][i]['url']+'" type="checkbox">',
                 result:result['result'][i]['url'],
                 action:'<a href="/action2?url='+result['result'][i]['url']+'">扫描</a>'
             }
