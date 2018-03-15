@@ -14,8 +14,8 @@ class TestMagicGoogle(unittest.TestCase):
 
     def setUp(self):
         PROXIES = [{
-            'http': '192.168.1.159:1080',
-            'https': '192.168.1.159:1080'
+            'http': '192.168.1.198:1080',
+            'https': '192.168.1.198:1080'
         }]
         self.mg = MagicGoogle(PROXIES)
 

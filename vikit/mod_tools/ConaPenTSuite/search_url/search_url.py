@@ -40,8 +40,8 @@ def conasearch(engine='google',key='python', page_num=0,page_size=30, savefile=1
     print ("\033[1;37;40m==========================第%s页采集开始================\n" % (page_num))
     if engine=='google':
         PROXIES = [{
-            'http': '192.168.1.159:1080',
-            'https': '192.168.1.159:1080'
+            'http': '192.168.1.198:1080',
+            'https': '192.168.1.198:1080'
         }]
         mg=MagicGoogle(PROXIES)
         sleep = random.randint(2, 15)
