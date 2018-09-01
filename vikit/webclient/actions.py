@@ -173,6 +173,13 @@ def get_status(task_id):
     else:
         return 'wrong task_id'
 
+@client_app.route('/refresh_results', methods=['get'])
+def refresh_results():
+    global result
+    
+    all_result=json.dumps(result)
+    
+    return all_result
 
 from vikit.mod_tools.ConaPenTSuite.search_url.search_url import conasearch
 
@@ -288,11 +295,15 @@ def result_del(task_id):
 @client_app.route('/task_status_timeout/<task_id>')
 def task_status_timeout(task_id):
     global result
+    #return json.dumps(result[task_id])
     if result and result.has_key(task_id) and result[task_id][0]=='processing':
         target=result[task_id][1]
         module=result[task_id][2]
         result[task_id]=('timeout',target,module)
         return 'success'
+    else:
+        return 'false'
+    
 
 @client_app.route('/crawler_target')
 def add_clawer_target():

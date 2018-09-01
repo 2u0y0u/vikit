@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html class=" ">
 {% include 'header.html' %}
+<script type=text/javascript src="{{ url_for('static', filename='vue.min.js') }}"></script>
 <head> 
 <style type="text/css">
 .filter{
@@ -36,7 +37,43 @@
             </tr>
             
             </thead>
-            <tbody id="resulist">
+            <tbody id="resulist" >
+                <tr v-for="(item,index) in items">
+                    <!-- <th>{[index]}</th>
+                    <th>{[item[2]]}</th>
+                    <th>{[item[1]]}</th>
+                    <th>{[item[0]]}</th> -->
+                    <template v-if="item[0]=='finished'">
+                        <template v-if="item[3][1]=='success'"> 
+                            <th class="danger">{[index]}</th>
+                            <th class="danger">{[item[2]]}</th>
+                            <th class="danger">{[item[1]]}</th>
+                            <th class="danger">{[item[0]]}</th>
+                            <th class="danger"><a :href="['result/'+index]" style="color:red">查看</a></th>
+                        </template>
+                        <template v-else>
+                            <th>{[index]}</th>
+                            <th>{[item[2]]}</th>
+                            <th>{[item[1]]}</th>
+                            <th>{[item[0]]}</th>
+                            <th><a :href="['result/'+index]" style="color:green">查看</a></th>
+                        </template>
+                    </template>
+                    <template v-else-if="item[0]=='processing'">
+                        <th>{[index]}</th>
+                        <th>{[item[2]]}</th>
+                        <th>{[item[1]]}</th>
+                        <th>{[item[0]]}</th>
+                        <th><a style="color:#3333FF">未完成</a></th>
+                    </template>
+                    <template v-else=>
+                        <th>{[index]}</th>
+                        <th>{[item[2]]}</th>
+                        <th>{[item[1]]}</th>
+                        <th>{[item[0]]}</th>
+                        <th><a style="color:#FF6633">连接超时</a></th>
+                    </template>
+                </tr>
 
             </tbody>
         </table>
@@ -44,173 +81,65 @@
 </main>
 
 <script>
-var task_id=new Array();
-var target;
+var tasks = new Array();
+var str='{{result|safe}}';
+var result_dic=jQuery.parseJSON(str);
+tasks = result_dic;
+var vm = new Vue({
+    el:'#resulist',
+    delimiters: ['{[', ']}'],
+    data:{
+        items:result_dic
+    }
+
+})
+
 var interval1;
-var num;
-var error=false;
-var state=new Array();
-   function show_result(){
-    var str='{{result|safe}}';
-    var result_dic=jQuery.parseJSON(str);
-    var i=0;
-    for (var key in result_dic){
-        task_id[i]=key;
-        i++;
-    }
-    num=task_id.length;
-    $("#resulist").empty();
-    for(var j=0;j<num;j++){
-        $.ajax(
-            {
-                url: "/task_status/"+task_id[j],
-                async:false,
-                success: function (result) {
-                    var task_status=jQuery.parseJSON(result);
-                    if(task_status[0]=="finished"){
-                        //target=result[1][0];
-                        if(task_status[3][1]=='success'){
-                            
-                           var tr='<tr class="danger"><th>'+task_id[j]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" href="result/'+task_id[j]+'" style="color:red">查看</a></th></tr>'; 
-                        }
-                        else{
-                            var tr='<tr><th>'+task_id[j]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" href="result/'+task_id[j]+'" style="color:green">查看</a></th></tr>';
-                        }
-                    
-                    $("#resulist").append(tr);
-                    state[task_id[j]]=task_status[0];
-                    }
-                    else if(task_status[0]=="timeout"){
-                        var tr='<tr class="unfinish'+j+'"><th>'+task_id[j]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" style="color:#FF6633">连接超时</a></th></tr>';
-                        $("#resulist").append(tr);
-                        state[task_id[j]]=task_status[0];
-                    }
-                    else{
-                        //target=result[1];
-                        var tr='<tr class="unfinish'+j+'"><th>'+task_id[j]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[j]+'" style="color:#3333FF">未完成</a></th></tr>';
-                        $("#resulist").prepend(tr);
-                        state[task_id[j]]=task_status[0];
-                    }
-                    
-                },
-                error:function () {
-                    console.log('ajax get_results request error');
-                    error=true;
-                    
-                }
-
-            }
-        )
-        if(error){
-            alert("ajax get_results request error");
-            window.clearInterval(interval1);
-            break;
-        }
-    }
-   }
-   function show_unfinish_result(){
-    for(var i=0;i<num;i++){
-        if(state[task_id[i]]=="processing"){
-            $.ajax(
-            {
-                url: "/task_status/"+task_id[i],
-                async:false,
-                success: function (result) {
-                    var task_status=jQuery.parseJSON(result);
-                    if(task_status[0]=="finished"){
-                        //target=result[1][0];
-                      $("#scan_result").find(".unfinish"+i).remove();  
-                        if(task_status[3][1]=='success'){
-                           var tr='<tr class="danger"><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:red">查看</a></th></tr>'; 
-                        }
-                        else if(task_status[0]=="timeout"){
-                            var tr='<tr class="unfinish'+i+'"><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" style="color:#FF6633">连接超时</a></th></tr>';
-                            $("#resulist").append(tr);
-                            state[task_id[i]]=task_status[0];
-                        }
-                        else{
-                            var tr='<tr><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:green">查看</a></th></tr>';
-                        }
-                        $("#resulist").append(tr);
-                        state[task_id[i]]=task_status[0];
-                    }
-                    
-                },
-                error:function () {
-                    console.log('ajax get_results request error');
-                    error=true;
-                    
-                }
-
-            }
-        )
-          if(error){
-            alert("ajax get_results request error");
-            window.clearInterval(interval1);
-            break;
-        }
-        }  
-        }
-    }
-   
-   $(document).ready(function(){
-    show_result();
+$(document).ready(function(){
     interval1=setInterval("show_unfinish_result()",3000);
-    //window.clearInterval(interval1);180000
+    //show_unfinish_result();
     setTimeout("timeout()",180000);
-   });
-   function timeout(){
-    window.clearInterval(interval1);
-    for(var i=0;i<num;i++){
-        if(state[task_id[i]]=="processing"){
-            $.ajax(
-            {
-                url: "/task_status/"+task_id[i],
-                async:false,
-                success: function (result) {
-                    var task_status=jQuery.parseJSON(result);
-                    if(task_status[0]=="finished"){
-                        //target=result[1][0];
-                      $("#scan_result").find(".unfinish"+i).remove();  
-                        if(task_status[3][1]=='success'){
-                           var tr='<tr class="danger"><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:red">查看</a></th></tr>'; 
-                        }
-                        else{
-                            var tr='<tr><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" href="result/'+task_id[i]+'" style="color:green">查看</a></th></tr>';
-                        }
-                        $("#resulist").append(tr);
-                        state[task_id[i]]=task_status[0];
-                    }
-                    else{
-                        $("#scan_result").find(".unfinish"+i).remove();  
-                        var tr='<tr class="unfinish'+i+'"><th>'+task_id[i]+'</th><th>'+task_status[2]+'</th><th>'+task_status[1]+'</th><th>'+task_status[0]+'</th><th><a data="'+task_id[i]+'" style="color:#FF6633">连接超时</a></th></tr>';
-                        $("#resulist").append(tr);
-                        if(error==false){
-                            result_state_timeout(task_id[i]);
-                            state[task_id[i]]=task_status[0];
-                        }
-                        
-                    }
-                    
-                },
-                error:function () {
-                    console.log('ajax get_results request error');
-                    error=true;
-                    
-                }
+    //timeout();
+});
 
-            }
-        )
-        if(error){
-            alert("ajax get_results request error");
-            window.clearInterval(interval1);
-            break;
-        }
-        }
-        }
+function refresh(){
+    show_unfinish_result();
+}
+
+function show_unfinish_result(){
+    $.ajax(
+{
+    url: "/refresh_results",
+    success: function(result){
+        
+        var all_results=jQuery.parseJSON(result);
+        //console.log(all_results);
+        vm.$data.items = all_results;
+        tasks = result_dic;
+    },
+    error:function(){
+        console.log("ajax error");
+    }
+}
+
+)
+}
+
+function timeout(){
+    show_unfinish_result();
+    window.clearInterval(interval1);
     
-   }
-   function result_state_timeout(task){
+    for(var task in tasks){
+        
+        if(tasks[task][0]=='processing'){
+            result_state_timeout(task);
+
+        }
+        show_unfinish_result();
+    }
+}
+
+function result_state_timeout(task){
     $.ajax(
             {
                 url: "/task_status_timeout/"+task,
@@ -222,7 +151,6 @@ var state=new Array();
                 error:function () {
                     console.log('ajax timeout request error');
                     error=true;
-                    alert('ajax timeout request error');
                     return 0;
                 }
 
@@ -230,38 +158,25 @@ var state=new Array();
         )
    }
    function filter(){
-    for(var i=0;i<num;i++){
-            $.ajax(
-            {
-                url: "/task_status/"+task_id[i],
-                async:false,
-                success: function (result) {
-                    var task_status=jQuery.parseJSON(result);
-                    if(task_status[3][1]!='success'){
-                        if(error==false){
-                            filter_remove_fail(task_id[i]);
-                        }
+    for(var task in tasks){
+        if(tasks[task][0]=='timeout'){
+            
+            filter_remove_fail(task);
+            
                       
-                    }
-                    
-                },
-                error:function () {
-                    console.log('ajax filter request error');
-                    error=true;
-                    
-                    
-                }
-
+        }
+        else{
+            if(tasks[task][3]=='Connection Error'){
+                filter_remove_fail(task);
             }
-        )
-            if(error){
-            break;
+            else if(tasks[task][3]=='exploit failed'){
+                filter_remove_fail(task);
+            }
         }
-        }
-        refresh();
-        if(error){
-        alert("ajax filter request error");
+            
+            
     }
+    show_unfinish_result();
    }
    function filter_remove_fail(task){
     $.ajax(
@@ -274,19 +189,13 @@ var state=new Array();
                 },
                 error:function () {
                     console.log('ajax filter request error');
-                    error=true;
-                    alert('ajax filter request error');
-                    return 0;
+                    
                 }
 
             }
         )
    }
-   function refresh(){
-    //window.location.reload();
-    $("#resulist").empty();
-    show_result();
-   }
+
 </script>
 <script>
     
