@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class=" ">
   {% include 'header.html' %}
-  <script src="{{ url_for('static', filename='js/tableCheckbox.js') }}"></script>
+  <!-- <script src="{{ url_for('static', filename='js/tableCheckbox.js') }}"></script> -->
   <script src="{{ url_for('static', filename='bootstrap-table.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-table.min.css') }}">
   <style type="text/css">
@@ -46,10 +46,11 @@
           </div>       
   <table class="table" id="myTable">
     <thead>
-      <th style="width:20px;" data-field="checkbox"><input type="checkbox"></th>
+      <!-- <th style="width:20px;" data-field="checkbox"><input type="checkbox"></th> -->
+      <!-- <th data-field="checkbox" data-checkbox="true"></th>
       <th data-field="module">module</th>
       <th data-field="port">port</th>
-      <th data-field="state">state</th>
+      <th data-field="state">state</th> -->
     </thead>
     <tbody id="modules">
       
@@ -60,7 +61,7 @@
             <div class="col-xs-offset-2 col-xs-8" style="width: 100%;max-width: 100%;margin-left:0">
                 <input type="button" onclick="submit_select()" name="submit" value="Submit" class="bsubmit button button-raised button-primary button-pill" style="margin-left: 85%; margin-top: 15px;" />
                 
-              
+              ["vikit_demo:7030", "heartbleed:7031", "ms17-010:7032", "st2_048:7033", "tomcat_cve_2017_12615:7034", "ftp_crack:7035", "wordpress_crackpass:7036", "jenkins_CVE_2017_1000353:7037", "ssh_crack:7038", "redis_crack:7039", "postgres_crack:7040", "mysql_crack:7041", "mssql_crack:7042", "jboss_crack:7043", "axis_crack:7044"]
             </div>
           </div> -->
         </div>
@@ -88,16 +89,43 @@ var $table = $('#myTable');
                 striped: true,
                 sortable: true,
                 search:true,
-                pageSize: 7,
-                pageList: [7,15,"All"],
+                pageSize: 15,
+                pageList: [15,30,"All"],
+                columns:[{
+                  checkbox:true,
+                  formatter:function(value, row, index) {
+              
+              if (row.state == '<font style="color:red" class="xxx">已添加</font>'){
+                  
+                  return {
+                      disabled : true,//设置是否可用
+                      checked : false//设置选中
+                  };
+              }
+              return value;
+          }
+                },{
+                  field:'module',
+                  title:'module'
+                },{
+                  field:'port',
+                  title:'port'
+                },{
+                  field:'state',
+                  title:'state'
+                }
+
+                ]
                 
                 
             });
+            
+            
   $(document).ready(function(){
     $table.bootstrapTable('removeAll');
     get_added_service_list();
     setTimeout(get_default_services_list(),100);
-    $("#myTable").tableCheck("info");
+    //$("#myTable").tableCheck("info");
     sernum();
 });
 function sernum(){
@@ -165,10 +193,10 @@ function sernum(){
         $table.bootstrapTable("insertRow",{
             index:index,
             row:{
-                checkbox:'<input data1="'+module_name+'" data2="'+module_port+'" type="checkbox" disabled="disabled" >',
+                checkbox:false,
                 module:module_name,
                 port:module_port,
-                state:'<font style="color:red">已添加</font>'  
+                state:'<font style="color:red" class="xxx">已添加</font>'  
             }
         });
       }
@@ -177,24 +205,39 @@ function sernum(){
         $table.bootstrapTable("insertRow",{
             index:0,
             row:{
-                checkbox:'<input data1="'+module_name+'" data2="'+module_port+'" type="checkbox" >',
+                checkbox:false,
                 module:module_name,
                 port:module_port,
-                state:'<font style="color:green">未添加</font>'  
+                state:'<font style="color:green" class="wei">未添加</font>'  
             }
+            
         });
+
       }
-      
+      /*$("#modules tr td").find("font").each(function(){
+        
+          console.log(1);
+        
+      });*/
     }
-    $("#myTable").tableCheck("info");
+    //$("#myTable").tableCheck("info");
 
   }
+function stateFormatter(value, row, index) {
+            if (row.state == true)
+                return {
+                    disabled : false,//设置是否可用
+                    checked : true//设置选中
+                };
+            return value;
+        }
    function add_default_service(module_name,port) {
         /*var module_name=$("input[name='module_name']").val();
         var port=$("input[name='port']").val();*/
         $.ajax(
             {
                 url: "/add-default-service"+"?module_name="+module_name+"&port="+port,
+                async:false,
                 success: function (result) {
                     //add li to ul
                     
@@ -220,36 +263,51 @@ function sernum(){
     } 
     function submit_select(){
       if($.cookie('pstate')=='online'){
-      $("#modules tr td").find("input[type='checkbox']:checked").each(function(){
-        
-          var module_name=$(this).attr("data1");
-          var module_port=$(this).attr("data2");
-          add_default_service(module_name,module_port);
-          
-          $(this).prop("checked",false);
-          var index=$(this).parent("td").parent("tr").data('index');
-          $table.bootstrapTable("updateRow",{
-            index:index,
-            row:{
-                checkbox:'<input data1="'+module_name+'" data2="'+module_port+'" type="checkbox" disabled="disabled" >',
-                state:'<font style="color:red">已添加</font>'  
-            }
-          });
-          $("#myTable").tableCheck("info");
-      });
+  
+      var selected = $table.bootstrapTable('getSelections');
+    console.log(selected);
+    for(var i=0;i<selected.length;i++){
+      
+      add_default_service(selected[i].module,selected[i].port)
+    }
+    $table.bootstrapTable('removeAll');
+    get_added_service_list();
+    setTimeout(get_default_services_list(),100);
         }
       else{
         alert("请先start!!!");
       }
     }
-    $(document).on('click', '.pagination', function(){
-        $("#myTable").tableCheck("info");
-    });
+
     $(document).on('click', '#modules tr td', function(){
         var _tr = $(this).parents('tr');
       _tr.find(":checkbox").trigger("click");
+   
     });
-  
+
+    $(document).on('click','input[name="btSelectAll"]',function(){
+      if(this.checked){
+        $("#modules tr").addClass("info");
+        $("#modules tr td").find("font").each(function(){
+          if($(this).hasClass("xxx")){
+            $(this).parent("td").parent("tr").removeClass("info");
+          }
+        });
+      }
+      else{
+        $("#modules tr").removeClass("info");
+      }
+    });
+   
+    $(document).on('change','#modules tr',function(){
+      
+      if($(this).hasClass("selected") ){
+        $(this).addClass("info");
+      }
+      else{
+        $(this).removeClass("info");
+      }
+    });
 
   </script>
 
